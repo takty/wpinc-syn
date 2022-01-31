@@ -10,9 +10,9 @@
 namespace wpinc\sys;
 
 /**
- * Enables 'enter title here' label.
+ * Activates 'enter title here' label.
  */
-function enable_enter_title_here_label() {
+function activate_enter_title_here_label() {
 	add_filter(
 		'enter_title_here',
 		function ( $enter_title_here, $post ) {
@@ -27,10 +27,6 @@ function enable_enter_title_here_label() {
 		2
 	);
 }
-
-
-// -----------------------------------------------------------------------------
-
 
 /**
  * Activates password from template.
@@ -55,4 +51,39 @@ function _cb_the_password_form( $output ) {
 		$output = str_replace( "\n", '', ob_get_clean() );
 	}
 	return $output;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+/**
+ * Removes indications from post titles.
+ *
+ * @param bool $protected Whether to remove 'Protected'.
+ * @param bool $private   Whether to remove 'Private'.
+ */
+function remove_post_title_indication( bool $protected, bool $private ): void {
+	if ( $protected ) {
+		add_filter( 'protected_title_format', '\wpinc\alt\_cb_title_format' );
+	}
+	if ( $private ) {
+		add_filter( 'private_title_format', '\wpinc\alt\_cb_title_format' );
+	}
+}
+
+/**
+ * Callback function for 'protected_title_format' and 'private_title_format' filter.
+ *
+ * @return string Format.
+ */
+function _cb_title_format(): string {
+	return '%s';
+}
+
+/**
+ * Removes prefixes from archive titles.
+ */
+function remove_archive_title_prefix(): void {
+	add_filter( 'get_the_archive_title_prefix', '__return_empty_string' );
 }
