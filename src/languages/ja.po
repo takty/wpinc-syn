@@ -1,0 +1,16 @@
+# Translation of Syn - Development in Japanese
+# @package Wpinc Syn
+# @author Takuto Yanagida
+# @version 2022-01-30
+
+# IP Restriction ---------------------------------------------------------------
+
+msgctxt "ip restriction"
+msgid "IP Restriction"
+msgstr "IP制限"
+
+# Sticky -----------------------------------------------------------------------
+
+msgctxt "sticky"
+msgid "Stick this post at the top"
+msgstr "この投稿を先頭に固定表示"
