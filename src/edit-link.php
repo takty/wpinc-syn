@@ -2,12 +2,12 @@
 /**
  * Custom Template Tags for Edit Links
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-30
  */
 
-namespace wpinc\syn;
+namespace wpinc\sys;
 
 /**
  * Echo edit post link of posts when available.

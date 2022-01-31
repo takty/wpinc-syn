@@ -1,5 +1,5 @@
 # Translation of Syn - Development in Japanese
-# @package Wpinc Syn
+# @package Wpinc Sys
 # @author Takuto Yanagida
 # @version 2022-01-30
 

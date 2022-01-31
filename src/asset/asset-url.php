@@ -2,12 +2,12 @@
 /**
  * URL of Assets Files.
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-17
  */
 
-namespace wpinc\syn;
+namespace wpinc\sys;
 
 /**
  * Gets the URL of the file.

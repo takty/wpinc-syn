@@ -2,12 +2,12 @@
 /**
  * Sticky for Custom Post Types
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-30
  */
 
-namespace wpinc\syn\sticky;
+namespace wpinc\sys\sticky;
 
 const PMK_STICKY = '_sticky';
 
@@ -41,9 +41,9 @@ function add_post_type( $post_type_s ): void {
 	$pts  = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
 
 	if ( empty( $inst->post_types ) ) {
-		add_filter( 'post_class', '\wpinc\syn\sticky\_cb_post_class', 10, 3 );
-		add_action( 'post_submitbox_misc_actions', '\wpinc\syn\sticky\_cb_post_submitbox_misc_actions' );
-		add_action( 'save_post', '\wpinc\syn\sticky\_cb_save_post', 10, 2 );
+		add_filter( 'post_class', '\wpinc\sys\sticky\_cb_post_class', 10, 3 );
+		add_action( 'post_submitbox_misc_actions', '\wpinc\sys\sticky\_cb_post_submitbox_misc_actions' );
+		add_action( 'save_post', '\wpinc\sys\sticky\_cb_save_post', 10, 2 );
 	}
 	array_push( $inst->post_types, ...$pt );
 }
@@ -91,7 +91,7 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	<div class="misc-pub-section">
 		<label style="margin-left:18px;">
 			<input type="checkbox" name="_wpinc_sticky" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
-			<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'syn' ); ?></span>
+			<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'sys' ); ?></span>
 		</label>
 	</div>
 	<?php

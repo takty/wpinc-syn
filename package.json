@@ -1,7 +1,7 @@
 {
-	"name": "wpinc-medi",
+	"name": "wpinc-sys",
 	"version": "0.1.0",
-	"description": "A Library of WordPress for Media",
+	"description": "A Library of WordPress for System",
 	"author": "Takuto Yanagida",
 	"main": "gulpfile.js",
 	"scripts": {
@@ -9,13 +9,13 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/takty/wpinc-medi.git"
+		"url": "git+https://github.com/takty/wpinc-sys.git"
 	},
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/takty/wpinc-medi/issues"
+		"url": "https://github.com/takty/wpinc-sys/issues"
 	},
-	"homepage": "https://github.com/takty/wpinc-medi#readme",
+	"homepage": "https://github.com/takty/wpinc-sys#readme",
 	"browserslist": [
 		"> 1%",
 		"last 2 versions",

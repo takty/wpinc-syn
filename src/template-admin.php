@@ -2,12 +2,12 @@
 /**
  * Template Admin
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-30
  */
 
-namespace wpinc\syn\template_admin;
+namespace wpinc\sys\template_admin;
 
 /**
  * Activates template admin.

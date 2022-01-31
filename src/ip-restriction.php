@@ -2,12 +2,12 @@
 /**
  * IP Restriction (IPv4)
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-30
  */
 
-namespace wpinc\syn\ip_restriction;
+namespace wpinc\sys\ip_restriction;
 
 const PMK_IP_RESTRICTION = '_ip_restriction';
 
@@ -16,11 +16,11 @@ const PMK_IP_RESTRICTION = '_ip_restriction';
  */
 function activate(): void {
 	if ( is_admin() ) {
-		add_action( 'post_submitbox_misc_actions', '\wpinc\syn\ip_restriction\_cb_post_submitbox_misc_actions' );
-		add_action( 'save_post', '\wpinc\syn\ip_restriction\_cb_save_post', 10, 2 );
+		add_action( 'post_submitbox_misc_actions', '\wpinc\sys\ip_restriction\_cb_post_submitbox_misc_actions' );
+		add_action( 'save_post', '\wpinc\sys\ip_restriction\_cb_save_post', 10, 2 );
 	} else {
-		add_action( 'pre_get_posts', '\wpinc\syn\ip_restriction\_cb_pre_get_posts' );
-		add_filter( 'body_class', '\wpinc\syn\ip_restriction\_cb_body_class' );
+		add_action( 'pre_get_posts', '\wpinc\sys\ip_restriction\_cb_pre_get_posts' );
+		add_filter( 'body_class', '\wpinc\sys\ip_restriction\_cb_body_class' );
 	}
 }
 
@@ -190,7 +190,7 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	<div class="misc-pub-section">
 		<label style="margin-left:18px;">
 			<input type="checkbox" name="_wpinc_ip_restriction" value="1" <?php echo esc_attr( $is_restricted ? ' checked' : '' ); ?>>
-			<span class="checkbox-title"><?php echo esc_html_x( 'IP Restriction', 'ip restriction', 'syn' ); ?></span>
+			<span class="checkbox-title"><?php echo esc_html_x( 'IP Restriction', 'ip restriction', 'sys' ); ?></span>
 		</label>
 	</div>
 	<?php

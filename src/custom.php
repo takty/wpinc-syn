@@ -2,12 +2,12 @@
 /**
  * Custom Settings.
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-31
  */
 
-namespace wpinc\syn;
+namespace wpinc\sys;
 
 /**
  * Enables 'enter title here' label.

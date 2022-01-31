@@ -2,7 +2,7 @@
 /**
  * Classic Editor Settings
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-31
  */
@@ -29,7 +29,7 @@ TinyMCE Advanced Setting:
 }
 */  // phpcs:enable
 
-namespace wpinc\syn;
+namespace wpinc\sys;
 
 require_once __DIR__ . '/assets/asset-url.php';
 
@@ -190,7 +190,7 @@ function disable_table_resizing(): void {
  * Adds quick tags.
  */
 function add_quick_tags(): void {
-	add_action( 'admin_print_footer_scripts', '\wpinc\syn\_cb_admin_print_footer_scripts' );
+	add_action( 'admin_print_footer_scripts', '\wpinc\sys\_cb_admin_print_footer_scripts' );
 }
 
 /**

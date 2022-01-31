@@ -2,12 +2,12 @@
 /**
  * Custom Option Page
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-31
  */
 
-namespace wpinc\syn\option_page;
+namespace wpinc\sys\option_page;
 
 /**
  * Activates custom option page.
@@ -62,8 +62,8 @@ function activate( array $args ): void {
 	$inst->as_menu_page = $args['as_menu_page'];
 	$inst->sections     = $args['sections'];
 
-	add_action( 'admin_menu', '\wpinc\syn\option_page\_cb_admin_menu' );
-	add_action( 'admin_init', '\wpinc\syn\option_page\_cb_admin_init' );
+	add_action( 'admin_menu', '\wpinc\sys\option_page\_cb_admin_menu' );
+	add_action( 'admin_init', '\wpinc\sys\option_page\_cb_admin_init' );
 }
 
 /**
@@ -79,7 +79,7 @@ function _cb_admin_menu(): void {
 			$inst->menu_title,
 			'edit_pages',
 			$inst->slug,
-			'\wpinc\syn\option_page\_cb_output_html'
+			'\wpinc\sys\option_page\_cb_output_html'
 		);
 	} else {
 		add_submenu_page(
@@ -88,7 +88,7 @@ function _cb_admin_menu(): void {
 			$inst->menu_title,
 			'manage_options',
 			$inst->slug,
-			'\wpinc\syn\option_page\_cb_output_html'
+			'\wpinc\sys\option_page\_cb_output_html'
 		);
 	}
 }
@@ -127,7 +127,7 @@ function _cb_admin_init(): void {
 		$inst->slug,
 		$inst->option_key,
 		array(
-			'sanitize_callback' => '\wpinc\syn\option_page\_cb_sanitize',
+			'sanitize_callback' => '\wpinc\sys\option_page\_cb_sanitize',
 		)
 	);
 	foreach ( $inst->sections as $sid => $cont ) {
@@ -137,7 +137,7 @@ function _cb_admin_init(): void {
 			add_settings_field(
 				$key,
 				$params['label'],
-				'\wpinc\syn\option_page\_cb_output_html_field',
+				'\wpinc\sys\option_page\_cb_output_html_field',
 				$inst->slug,
 				$sid,
 				array( $key, $params, $vals )

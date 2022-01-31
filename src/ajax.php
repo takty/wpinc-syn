@@ -2,12 +2,12 @@
 /**
  * Ajax
  *
- * @package Wpinc Syn
+ * @package Wpinc Sys
  * @author Takuto Yanagida
  * @version 2022-01-30
  */
 
-namespace wpinc\syn\ajax;
+namespace wpinc\sys\ajax;
 
 /**
  * Activate AJAX.
