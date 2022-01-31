@@ -29,7 +29,7 @@ TinyMCE Advanced Setting:
 }
 */  // phpcs:enable
 
-namespace wpinc\sys;
+namespace wpinc\sys\classic_editor;
 
 require_once __DIR__ . '/assets/asset-url.php';
 
