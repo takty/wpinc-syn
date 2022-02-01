@@ -58,11 +58,11 @@ namespace sample {
 	/**
 	 * Echo edit post link of menus when available.
 	 *
-	 * @param \wpinc\navi\Nav_Menu $nav_menu Nav_Menu to be edited.
-	 * @param string               $cls      CSS Class.
+	 * @param int    $menu_id Menu ID to edit.
+	 * @param string $cls     CSS Class.
 	 */
-	function the_admin_edit_menu( \wpinc\navi\Nav_Menu $nav_menu, string $cls = '' ): void {
-		\wpinc\sys\the_admin_edit_menu( $nav_menu, $cls );
+	function the_admin_edit_menu( int $menu_id, string $cls = '' ): void {
+		\wpinc\sys\the_admin_edit_menu( $menu_id, $cls );
 	}
 
 	/**

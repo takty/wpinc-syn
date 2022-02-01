@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-30
+ * @version 2022-01-31
  */
 
 namespace wpinc\sys;
@@ -18,7 +18,7 @@ function the_admin_edit_post( string $cls = '' ): void {
 	if ( can_edit_post() ) {
 		?>
 		<div class="admin-edit<?php echo esc_attr( ' ' . $cls ); ?>">
-			<a href="<?php \st\the_edit_link_post(); ?>">EDIT</a>
+			<a href="<?php the_edit_link_post(); ?>">EDIT</a>
 		</div>
 		<?php
 	}
@@ -27,14 +27,14 @@ function the_admin_edit_post( string $cls = '' ): void {
 /**
  * Echo edit post link of menus when available.
  *
- * @param \wpinc\navi\Nav_Menu $nav_menu Nav_Menu to be edited.
- * @param string               $cls      CSS Class.
+ * @param int    $menu_id Menu ID to edit.
+ * @param string $cls     CSS Class.
  */
-function the_admin_edit_menu( \wpinc\navi\Nav_Menu $nav_menu, string $cls = '' ): void {
+function the_admin_edit_menu( int $menu_id, string $cls = '' ): void {
 	if ( can_edit_theme_options() ) {
 		?>
 		<div class="admin-edit<?php echo esc_attr( ' ' . $cls ); ?>">
-			<a href="<?php \st\the_edit_link_menu( $nav_menu ); ?>">EDIT</a>
+			<a href="<?php the_edit_link_menu( $menu_id ); ?>">EDIT</a>
 		</div>
 		<?php
 	}

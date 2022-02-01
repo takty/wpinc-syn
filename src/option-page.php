@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-31
+ * @version 2022-02-01
  */
 
 namespace wpinc\sys\option_page;
@@ -43,7 +43,7 @@ function activate( array $args ): void {
 			'label'  => '',
 			'fields' => array(),
 		);
-		foreach ( $params['fields'] as $key => &$params ) {
+		foreach ( $cont['fields'] as $key => &$params ) {
 			$params += array(
 				'type'        => '',
 				'label'       => '',

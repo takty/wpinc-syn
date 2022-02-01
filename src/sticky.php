@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-30
+ * @version 2022-02-01
  */
 
 namespace wpinc\sys\sticky;
@@ -45,7 +45,7 @@ function add_post_type( $post_type_s ): void {
 		add_action( 'post_submitbox_misc_actions', '\wpinc\sys\sticky\_cb_post_submitbox_misc_actions' );
 		add_action( 'save_post', '\wpinc\sys\sticky\_cb_save_post', 10, 2 );
 	}
-	array_push( $inst->post_types, ...$pt );
+	array_push( $inst->post_types, ...$pts );
 }
 
 /**

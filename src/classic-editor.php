@@ -48,7 +48,7 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
 	add_filter(
 		'mce_external_plugins',
 		function ( $plugins ) use ( $url_to ) {
-			$plugins['columns'] = $url_to . '/asset/editor-command.min.js';
+			$plugins['columns'] = $url_to . '/assets/editor-command.min.js';
 			return $plugins;
 		}
 	);
@@ -190,7 +190,7 @@ function disable_table_resizing(): void {
  * Adds quick tags.
  */
 function add_quick_tags(): void {
-	add_action( 'admin_print_footer_scripts', '\wpinc\sys\_cb_admin_print_footer_scripts' );
+	add_action( 'admin_print_footer_scripts', '\wpinc\sys\classic_editor\_cb_admin_print_footer_scripts' );
 }
 
 /**
