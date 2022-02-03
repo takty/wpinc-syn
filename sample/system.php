@@ -4,12 +4,22 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-01-31
+ * @version 2022-02-03
  */
 
 namespace sample {
 	require_once __DIR__ . '/sys/custom.php';
 	require_once __DIR__ . '/sys/edit-link.php';
+	require_once __DIR__ . '/sys/utility.php';
+
+	/**
+	 * Activates simple default slugs.
+	 *
+	 * @param string|string[] $post_type_s Post types. Default array() (all post types).
+	 */
+	function activate_simple_default_slug( $post_type_s = array() ) {
+		\wpinc\sys\activate_simple_default_slug( $post_type_s );
+	}
 
 	/**
 	 * Activates 'enter title here' label.
@@ -113,6 +123,46 @@ namespace sample {
 	 */
 	function the_edit_link_option_page( string $page_slug ): void {
 		\wpinc\sys\the_edit_link_option_page( $page_slug );
+	}
+
+
+	// -------------------------------------------------------------------------
+
+
+	/**
+	 * Checks current post type.
+	 *
+	 * @param string $post_type Post type.
+	 * @return bool True if the current post type is $post_type.
+	 */
+	function is_post_type( string $post_type ): bool {
+		return \wpinc\sys\is_post_type( $post_type );
+	}
+
+	/**
+	 * Retrieves post type title.
+	 */
+	function get_post_type_title() {
+		return \wpinc\sys\get_post_type_title();
+	}
+
+	/**
+	 * Gets current URL.
+	 *
+	 * @return string Current URL.
+	 */
+	function get_current_url(): string {
+		return \wpinc\sys\get_current_url();
+	}
+
+	/**
+	 * Serializes URL components.
+	 *
+	 * @param array $cs URL components.
+	 * @return string URL.
+	 */
+	function serialize_url( array $cs ): string {
+		return \wpinc\sys\serialize_url( $cs );
 	}
 }
 
