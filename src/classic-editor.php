@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-31
+ * @version 22022-02-03
  */
 
 /*  // phpcs:disable
@@ -48,7 +48,7 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
 	add_filter(
 		'mce_external_plugins',
 		function ( $plugins ) use ( $url_to ) {
-			$plugins['columns'] = $url_to . '/assets/editor-command.min.js';
+			$plugins['columns'] = $url_to . '/assets/js/editor-command.min.js';
 			return $plugins;
 		}
 	);
