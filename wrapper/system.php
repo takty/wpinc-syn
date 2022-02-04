@@ -4,7 +4,7 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-02-03
+ * @version 2022-02-04
  */
 
 namespace sample {
@@ -128,23 +128,6 @@ namespace sample {
 
 	// -------------------------------------------------------------------------
 
-
-	/**
-	 * Checks current post type.
-	 *
-	 * @param string $post_type Post type.
-	 * @return bool True if the current post type is $post_type.
-	 */
-	function is_post_type( string $post_type ): bool {
-		return \wpinc\sys\is_post_type( $post_type );
-	}
-
-	/**
-	 * Retrieves post type title.
-	 */
-	function get_post_type_title() {
-		return \wpinc\sys\get_post_type_title();
-	}
 
 	/**
 	 * Gets current URL.
