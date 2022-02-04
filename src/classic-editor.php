@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 22022-02-03
+ * @version 2022-02-04
  */
 
 /*  // phpcs:disable
@@ -43,12 +43,12 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
 	if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'edit_pages' ) ) {
 		return;
 	}
-	$url_to = untrailingslashit( $url_to ?? \wpinc\post\get_file_uri( __DIR__ ) );
+	$url_to = untrailingslashit( $url_to ?? \wpinc\get_file_uri( __DIR__ ) );
 
 	add_filter(
 		'mce_external_plugins',
 		function ( $plugins ) use ( $url_to ) {
-			$plugins['columns'] = $url_to . '/assets/js/editor-command.min.js';
+			$plugins['columns'] = \wpinc\abs_url( $url_to, './assets/js/editor-command.min.js' );
 			return $plugins;
 		}
 	);
