@@ -2,7 +2,7 @@
  * Editor Commands for TinyMCE
  *
  * @author Takuto Yanagida
- * @version 2022-01-31
+ * @version 2022-02-07
  */
 
 (function () {
@@ -23,17 +23,17 @@
 			ed.addButton('column_2', {
 				title: '2段組',
 				cmd  : 'column_2',
-				image: url + '/img/icon-column-2.png'
+				image: url + '/../img/icon-column-2.png'
 			});
 			ed.addButton('column_3', {
 				title: '3段組',
 				cmd  : 'column_3',
-				image: url + '/img/icon-column-3.png'
+				image: url + '/../img/icon-column-3.png'
 			});
 			ed.addButton('column_4', {
 				title: '4段組',
 				cmd  : 'column_4',
-				image: url + '/img/icon-column-4.png'
+				image: url + '/../img/icon-column-4.png'
 			});
 		}
 	});
