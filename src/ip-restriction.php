@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-30
+ * @version 2022-02-07
  */
 
 namespace wpinc\sys\ip_restriction;
@@ -190,7 +190,7 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	<div class="misc-pub-section">
 		<label style="margin-left:18px;">
 			<input type="checkbox" name="_wpinc_ip_restriction" value="1" <?php echo esc_attr( $is_restricted ? ' checked' : '' ); ?>>
-			<span class="checkbox-title"><?php echo esc_html_x( 'IP Restriction', 'ip restriction', 'sys' ); ?></span>
+			<span class="checkbox-title"><?php echo esc_html_x( 'IP Restriction', 'ip restriction', 'wpinc_sys' ); ?></span>
 		</label>
 	</div>
 	<?php

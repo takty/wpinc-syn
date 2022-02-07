@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-01
+ * @version 2022-02-07
  */
 
 namespace wpinc\sys\sticky;
@@ -91,7 +91,7 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	<div class="misc-pub-section">
 		<label style="margin-left:18px;">
 			<input type="checkbox" name="_wpinc_sticky" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
-			<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'sys' ); ?></span>
+			<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'wpinc_sys' ); ?></span>
 		</label>
 	</div>
 	<?php
