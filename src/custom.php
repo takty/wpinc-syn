@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-03
+ * @version 2022-02-07
  */
 
 namespace wpinc\sys;
@@ -92,10 +92,10 @@ function _cb_the_password_form( $output ) {
  */
 function remove_post_title_indication( bool $protected, bool $private ): void {
 	if ( $protected ) {
-		add_filter( 'protected_title_format', '\wpinc\alt\_cb_title_format' );
+		add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format' );
 	}
 	if ( $private ) {
-		add_filter( 'private_title_format', '\wpinc\alt\_cb_title_format' );
+		add_filter( 'private_title_format', '\wpinc\sys\_cb_title_format' );
 	}
 }
 
