@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-07
+ * @version 2022-02-08
  */
 
 namespace wpinc\sys;
@@ -15,6 +15,9 @@ namespace wpinc\sys;
  * @param string|string[] $post_type_s Post types. Default array() (all post types).
  */
 function activate_simple_default_slug( $post_type_s = array() ) {
+	if ( ! is_admin() ) {
+		return;
+	}
 	$pts = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
 	add_filter(
 		'wp_unique_post_slug',
@@ -36,6 +39,9 @@ function activate_simple_default_slug( $post_type_s = array() ) {
  * Activates 'enter title here' label.
  */
 function activate_enter_title_here_label() {
+	if ( ! is_admin() ) {
+		return;
+	}
 	add_filter(
 		'enter_title_here',
 		function ( $enter_title_here, $post ) {
@@ -59,7 +65,9 @@ function activate_enter_title_here_label() {
  * Activates password from template.
  */
 function activate_password_form_template(): void {
-	add_filter( 'the_password_form', '\wpinc\alt\_cb_the_password_form', 10 );
+	if ( ! is_admin() ) {
+		add_filter( 'the_password_form', '\wpinc\alt\_cb_the_password_form', 10 );
+	}
 }
 
 /**
@@ -91,11 +99,13 @@ function _cb_the_password_form( $output ) {
  * @param bool $private   Whether to remove 'Private'.
  */
 function remove_post_title_indication( bool $protected, bool $private ): void {
-	if ( $protected ) {
-		add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format' );
-	}
-	if ( $private ) {
-		add_filter( 'private_title_format', '\wpinc\sys\_cb_title_format' );
+	if ( ! is_admin() ) {
+		if ( $protected ) {
+			add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format' );
+		}
+		if ( $private ) {
+			add_filter( 'private_title_format', '\wpinc\sys\_cb_title_format' );
+		}
 	}
 }
 
@@ -112,5 +122,7 @@ function _cb_title_format(): string {
  * Removes prefixes from archive titles.
  */
 function remove_archive_title_prefix(): void {
-	add_filter( 'get_the_archive_title_prefix', '__return_empty_string' );
+	if ( ! is_admin() ) {
+		add_filter( 'get_the_archive_title_prefix', '__return_empty_string' );
+	}
 }

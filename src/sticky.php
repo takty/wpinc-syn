@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-07
+ * @version 2022-02-08
  */
 
 namespace wpinc\sys\sticky;
@@ -16,6 +16,9 @@ const PMK_STICKY = '_sticky';
  * The embedded sticky post function is only for default 'post' type.
  */
 function disable_embedded_sticky(): void {
+	if ( is_admin() ) {
+		return;
+	}
 	add_action(
 		'pre_get_posts',
 		function ( $query ) {

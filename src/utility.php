@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-04
+ * @version 2022-02-09
  */
 
 namespace wpinc\sys;
@@ -15,10 +15,17 @@ namespace wpinc\sys;
  * @return string Current URL.
  */
 function get_current_url(): string {
+	if ( is_singular() ) {
+		return get_permalink();
+	}
+	if ( ! isset( $_SERVER['HTTP_HOST'] ) || ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return home_url();
+	}
 	// phpcs:disable
-	$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'];
-	return ( is_ssl() ? 'https://' : 'http://' ) . $host . $_SERVER['REQUEST_URI'];
+	$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'];  // When reverse proxy exists.
+	$req  = $_SERVER['REQUEST_URI'];
 	// phpcs:enable
+	return ( is_ssl() ? 'https://' : 'http://' ) . wp_unslash( $host ) . wp_unslash( $req );
 }
 
 /**

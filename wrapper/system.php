@@ -4,7 +4,7 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-02-04
+ * @version 2022-02-09
  */
 
 namespace sample {
@@ -129,13 +129,15 @@ namespace sample {
 	// -------------------------------------------------------------------------
 
 
-	/**
-	 * Gets current URL.
-	 *
-	 * @return string Current URL.
-	 */
-	function get_current_url(): string {
-		return \wpinc\sys\get_current_url();
+	if ( ! function_exists( '\sample\get_current_url' ) ) {
+		/**
+		 * Gets current URL.
+		 *
+		 * @return string Current URL.
+		 */
+		function get_current_url(): string {
+			return \wpinc\sys\get_current_url();
+		}
 	}
 
 	/**

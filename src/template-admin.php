@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-30
+ * @version 2022-02-08
  */
 
 namespace wpinc\sys\template_admin;
@@ -15,6 +15,9 @@ namespace wpinc\sys\template_admin;
  * @param string $function_name Function name for admin.
  */
 function activate( string $function_name = 'setup_template_admin' ): void {
+	if ( ! is_admin() ) {
+		return;
+	}
 	$post_fixes = array( '--admin.php', '_admin.php' );
 
 	add_action(

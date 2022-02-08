@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-04
+ * @version 2022-02-08
  */
 
 /*  // phpcs:disable
@@ -40,6 +40,9 @@ require_once __DIR__ . '/assets/asset-url.php';
  * @param int         $row_index Tool bar row.
  */
 function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
+	if ( ! is_admin() ) {
+		return;
+	}
 	if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'edit_pages' ) ) {
 		return;
 	}
@@ -72,6 +75,9 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
  * }
  */
 function add_style_formats( array $args = array() ): void {
+	if ( ! is_admin() ) {
+		return;
+	}
 	add_filter(
 		'tiny_mce_before_init',
 		function ( $mce_init ) use ( $args ) {
@@ -152,6 +158,9 @@ function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
  * @param int $count       Count of headings.
  */
 function set_used_heading( int $first_level = 2, int $count = 3 ): void {
+	if ( ! is_admin() ) {
+		return;
+	}
 	$hs = array_map(
 		function ( $l ) {
 			return "Heading $l=h$l";
@@ -172,6 +181,9 @@ function set_used_heading( int $first_level = 2, int $count = 3 ): void {
  * Disables table resizing function.
  */
 function disable_table_resizing(): void {
+	if ( ! is_admin() ) {
+		return;
+	}
 	add_filter(
 		'tiny_mce_before_init',
 		function ( $mce_init ) {
@@ -190,6 +202,9 @@ function disable_table_resizing(): void {
  * Adds quick tags.
  */
 function add_quick_tags(): void {
+	if ( ! is_admin() ) {
+		return;
+	}
 	add_action( 'admin_print_footer_scripts', '\wpinc\sys\classic_editor\_cb_admin_print_footer_scripts' );
 }
 
