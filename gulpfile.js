@@ -2,7 +2,7 @@
  * Gulp file
  *
  * @author Takuto Yanagida
- * @version 2021-03-22
+ * @version 2022-02-09
  */
 
 /* eslint-disable no-undef */
@@ -14,6 +14,7 @@ const SRC_SASS    = ['src/**/*.scss'];
 const SRC_CSS_RAW = ['src/**/*.css', '!src/**/*.min.css'];
 const SRC_CSS_MIN = ['src/**/*.min.css'];
 const SRC_PHP     = ['src/**/*.php'];
+const SRC_IMG     = ['src/**/*.png'];
 const SRC_LOCALE  = ['src/languages/**/*.po'];
 const DIST        = './dist';
 
@@ -103,6 +104,14 @@ gulp.task('php', () => {
 		.pipe(gulp.dest(DIST));
 });
 
+gulp.task('img', () => {
+	if (SRC_IMG.length === 0) return done();
+	return gulp.src(SRC_IMG)
+		.pipe($.plumber())
+		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest(DIST));
+});
+
 
 // -----------------------------------------------------------------------------
 
@@ -127,9 +136,10 @@ gulp.task('watch', () => {
 	gulp.watch(SRC_CSS_RAW, gulp.series('css-raw'));
 	gulp.watch(SRC_CSS_MIN, gulp.series('css-min'));
 	gulp.watch(SRC_PHP, gulp.series('php'));
+	gulp.watch(SRC_IMG, gulp.series('img'));
 	gulp.watch(SRC_LOCALE, gulp.series('locale'));
 });
 
-gulp.task('build', gulp.parallel('js', 'css', 'php', 'locale'));
+gulp.task('build', gulp.parallel('js', 'css', 'php', 'img', 'locale'));
 
 gulp.task('default', gulp.series('build', 'watch'));
