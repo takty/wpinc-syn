@@ -52,6 +52,13 @@ namespace sample {
 		\wpinc\sys\remove_archive_title_prefix();
 	}
 
+	/**
+	 * Removes separators from document title.
+	 */
+	function remove_document_title_separator(): void {
+		\wpinc\sys\remove_document_title_separator();
+	}
+
 
 	// -------------------------------------------------------------------------
 

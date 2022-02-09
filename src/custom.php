@@ -126,3 +126,35 @@ function remove_archive_title_prefix(): void {
 		add_filter( 'get_the_archive_title_prefix', '__return_empty_string' );
 	}
 }
+
+/**
+ * Removes separators from document title.
+ */
+function remove_document_title_separator(): void {
+	add_filter(
+		'document_title_parts',
+		function ( $title ) {
+			if ( is_front_page() ) {
+				$title['title'] = _strip_custom_tags( $title['title'] );
+			} else {
+				$title['site'] = _strip_custom_tags( $title['site'] );
+			}
+			return $title;
+		}
+	);
+}
+
+/**
+ * Strips all tags and custom 'br'.
+ *
+ * @access private
+ *
+ * @param string $text The text.
+ * @return string The stripped text.
+ */
+function _strip_custom_tags( string $text ): string {
+	// Replace double full-width spaces and br tags to single space.
+	$text = preg_replace( '/　　|<\s*br\s*\/?>/ui', ' ', $text );
+	$text = wp_strip_all_tags( $text, true );
+	return $text;
+}
