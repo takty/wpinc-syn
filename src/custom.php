@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-08
+ * @version 2022-02-09
  */
 
 namespace wpinc\sys;
@@ -66,7 +66,7 @@ function activate_enter_title_here_label() {
  */
 function activate_password_form_template(): void {
 	if ( ! is_admin() ) {
-		add_filter( 'the_password_form', '\wpinc\alt\_cb_the_password_form', 10 );
+		add_filter( 'the_password_form', '\wpinc\sys\_cb_the_password_form', 10 );
 	}
 }
 
