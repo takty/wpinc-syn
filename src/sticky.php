@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-08
+ * @version 2022-02-10
  */
 
 namespace wpinc\sys\sticky;
@@ -45,7 +45,19 @@ function add_post_type( $post_type_s ): void {
 
 	if ( empty( $inst->post_types ) ) {
 		add_filter( 'post_class', '\wpinc\sys\sticky\_cb_post_class', 10, 3 );
-		add_action( 'post_submitbox_misc_actions', '\wpinc\sys\sticky\_cb_post_submitbox_misc_actions' );
+		add_action(
+			'current_screen',  // For using is_block_editor().
+			function () {
+				global $pagenow;
+				if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
+					if ( get_current_screen()->is_block_editor() ) {
+						add_action( 'add_meta_boxes', '\wpinc\sys\sticky\_cb_add_meta_boxes', 10, 2 );
+					} else {
+						add_action( 'post_submitbox_misc_actions', '\wpinc\sys\sticky\_cb_post_submitbox_misc_actions' );
+					}
+				}
+			}
+		);
 		add_action( 'save_post', '\wpinc\sys\sticky\_cb_save_post', 10, 2 );
 	}
 	array_push( $inst->post_types, ...$pts );
@@ -90,14 +102,45 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	}
 	wp_nonce_field( '_wpinc_sticky', '_wpinc_sticky_nonce' );
 	$sticky = get_post_meta( get_the_ID(), PMK_STICKY, true );
-	?>
-	<div class="misc-pub-section">
-		<label style="margin-left:18px;">
+
+	if ( get_current_screen()->is_block_editor() ) {
+		?>
+		<label>
 			<input type="checkbox" name="_wpinc_sticky" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
 			<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'wpinc_sys' ); ?></span>
 		</label>
-	</div>
-	<?php
+		<?php
+	} else {
+		?>
+		<div class="misc-pub-section">
+			<label style="margin-left:18px;">
+				<input type="checkbox" name="_wpinc_sticky" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
+				<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'wpinc_sys' ); ?></span>
+			</label>
+		</div>
+		<?php
+	}
+}
+
+/**
+ * Callback function for 'add_meta_boxes' action.
+ * For adding metabox to block editor.
+ *
+ * @param string   $post_type Post type.
+ * @param \WP_Post $post      Post object.
+ */
+function _cb_add_meta_boxes( string $post_type, \WP_Post $post ): void {
+	$inst = _get_instance();
+	\add_meta_box(
+		'_wpinc_sticky_mb',
+		__( 'Sticky' ),
+		function ( \WP_Post $post ) {
+			_cb_post_submitbox_misc_actions( $post );
+		},
+		$post_type,
+		'side',
+		'high'
+	);
 }
 
 /**
@@ -110,16 +153,12 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
  */
 function _cb_save_post( int $post_id, \WP_Post $post ): void {
 	$inst = _get_instance();
-	if ( ! in_array( $post->post_type, $inst->post_types, true ) ) {
-		return;
-	}
-	if ( ! isset( $_POST['_wpinc_sticky_nonce'] ) ) {
-		return;
-	}
-	if ( ! wp_verify_nonce( sanitize_key( $_POST['_wpinc_sticky_nonce'] ), '_wpinc_sticky' ) ) {
-		return;
-	}
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+	if (
+		! in_array( $post->post_type, $inst->post_types, true ) ||
+		! isset( $_POST['_wpinc_sticky_nonce'] ) ||
+		! wp_verify_nonce( sanitize_key( $_POST['_wpinc_sticky_nonce'] ), '_wpinc_sticky' ) ||
+		defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE
+	) {
 		return;
 	}
 	if ( isset( $_POST['_wpinc_sticky'] ) ) {
