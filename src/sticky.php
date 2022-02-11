@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-10
+ * @version 2022-02-12
  */
 
 namespace wpinc\sys\sticky;
@@ -44,21 +44,25 @@ function add_post_type( $post_type_s ): void {
 	$pts  = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
 
 	if ( empty( $inst->post_types ) ) {
-		add_filter( 'post_class', '\wpinc\sys\sticky\_cb_post_class', 10, 3 );
-		add_action(
-			'current_screen',  // For using is_block_editor().
-			function () {
-				global $pagenow;
-				if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
-					if ( get_current_screen()->is_block_editor() ) {
-						add_action( 'add_meta_boxes', '\wpinc\sys\sticky\_cb_add_meta_boxes', 10, 2 );
-					} else {
-						add_action( 'post_submitbox_misc_actions', '\wpinc\sys\sticky\_cb_post_submitbox_misc_actions' );
+		if ( is_admin() ) {
+			add_filter( 'display_post_states', '\wpinc\sys\sticky\_cb_display_post_states', 10, 2 );
+			add_action( 'save_post', '\wpinc\sys\sticky\_cb_save_post', 10, 2 );
+			add_action(
+				'current_screen',  // For using is_block_editor().
+				function () {
+					global $pagenow;
+					if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
+						if ( get_current_screen()->is_block_editor() ) {
+							add_action( 'add_meta_boxes', '\wpinc\sys\sticky\_cb_add_meta_boxes', 10, 2 );
+						} else {
+							add_action( 'post_submitbox_misc_actions', '\wpinc\sys\sticky\_cb_post_submitbox_misc_actions' );
+						}
 					}
 				}
-			}
-		);
-		add_action( 'save_post', '\wpinc\sys\sticky\_cb_save_post', 10, 2 );
+			);
+		} else {
+			add_filter( 'post_class', '\wpinc\sys\sticky\_cb_post_class', 10, 3 );
+		}
 	}
 	array_push( $inst->post_types, ...$pts );
 }
@@ -75,9 +79,6 @@ function add_post_type( $post_type_s ): void {
  */
 function _cb_post_class( array $classes, array $class, int $post_id ): array {
 	$inst = _get_instance();
-	if ( is_admin() ) {
-		return $classes;
-	}
 	if ( ! in_array( get_post_type( $post_id ), $inst->post_types, true ) ) {
 		return $classes;
 	}
@@ -86,6 +87,27 @@ function _cb_post_class( array $classes, array $class, int $post_id ): array {
 		$classes[] = 'sticky';
 	}
 	return $classes;
+}
+
+/**
+ * Callback function for 'display_post_states' filter.
+ *
+ * @access private
+ *
+ * @param string[] $post_states An array of post display states.
+ * @param \WP_Post $post        The current post object.
+ * @return string[] The filtered states.
+ */
+function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
+	$inst = _get_instance();
+	if ( ! in_array( get_post_type( $post ), $inst->post_types, true ) ) {
+		return $post_states;
+	}
+	$is_sticky = get_post_meta( $post->ID, PMK_STICKY, true );
+	if ( $is_sticky ) {
+		$post_states['sticky'] = _x( 'Sticky', 'post status' );
+	}
+	return $post_states;
 }
 
 /**
