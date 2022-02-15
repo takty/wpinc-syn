@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-08
+ * @version 2022-02-15
  */
 
 /*  // phpcs:disable
@@ -96,12 +96,12 @@ function add_style_formats( array $args = array() ): void {
 function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
 	$ls  = $args['labels'] ?? array();
 	$ls += array(
-		'button'          => 'リンク・ボタン',
-		'frame'           => '囲み',
-		'frame-alt'       => '囲み・他',
-		'tab-page'        => 'タブ・ページ',
-		'pseudo-tab-page' => '擬似タブ・ページ',
-		'clear'           => 'フロート解除',
+		'button'          => _x( 'Link Button', 'classic editor', 'wpinc_sys' ),
+		'frame'           => _x( 'Frame', 'classic editor', 'wpinc_sys' ),
+		'frame-alt'       => _x( 'Frame Alt', 'classic editor', 'wpinc_sys' ),
+		'tab-page'        => _x( 'Tab Pages', 'classic editor', 'wpinc_sys' ),
+		'pseudo-tab-page' => _x( 'Pseudo Tab Pages', 'classic editor', 'wpinc_sys' ),
+		'clear'           => _x( 'Clear Float', 'classic editor', 'wpinc_sys' ),
 	);
 
 	$formats = array();

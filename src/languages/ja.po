@@ -1,7 +1,7 @@
-# Translation of Syn - Development in Japanese
+# Translation of Sys - Development in Japanese
 # @package Wpinc Sys
 # @author Takuto Yanagida
-# @version 2022-01-30
+# @version 2022-02-15
 
 # IP Restriction ---------------------------------------------------------------
 
@@ -14,3 +14,55 @@ msgstr "IP制限"
 msgctxt "sticky"
 msgid "Stick this post at the top"
 msgstr "この投稿を先頭に固定表示"
+
+# Classic Editor ---------------------------------------------------------------
+
+msgctxt "classic editor"
+msgid "Link Button"
+msgstr "リンク・ボタン"
+
+msgctxt "classic editor"
+msgid "Frame"
+msgstr "囲み"
+
+msgctxt "classic editor"
+msgid "Frame Alt"
+msgstr "囲み・他"
+
+msgctxt "classic editor"
+msgid "Tab Pages"
+msgstr "タブ・ページ"
+
+msgctxt "classic editor"
+msgid "Pseudo Tab Pages"
+msgstr "擬似タブ・ページ"
+
+msgctxt "classic editor"
+msgid "Clear Float"
+msgstr "フロート解除"
+
+# Text Banner Widget -----------------------------------------------------------
+
+msgctxt "text banner"
+msgid "Text Banner"
+msgstr "テキスト・バナー"
+
+msgctxt "text banner"
+msgid "Title"
+msgstr "タイトル"
+
+msgctxt "text banner"
+msgid "Link To"
+msgstr "リンク先"
+
+msgctxt "text banner"
+msgid "Color"
+msgstr "色"
+
+msgctxt "text banner"
+msgid "Background Color"
+msgstr "背景色"
+
+msgctxt "text banner"
+msgid "Optional Color"
+msgstr "オプション色"

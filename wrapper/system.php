@@ -4,13 +4,14 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-02-09
+ * @version 2022-02-15
  */
 
 namespace sample {
 	require_once __DIR__ . '/sys/custom.php';
 	require_once __DIR__ . '/sys/edit-link.php';
 	require_once __DIR__ . '/sys/utility.php';
+	require_once __DIR__ . '/sys/class-widget-text-banner.php';
 
 	/**
 	 * Activates simple default slugs.
