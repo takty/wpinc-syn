@@ -15,7 +15,7 @@ TinyMCE Advanced Setting:
 		"toolbar_2":"undo,redo,styleselect,removeformat,forecolor,backcolor,blockquote",
 		"toolbar_3":"",
 		"toolbar_4":"",
-		"toolbar_classic_block":"formatselect,bold,italic,blockquote,bullist,numlist,alignleft,aligncenter,alignright,link,forecolor,backcolor,table,wp_help",
+		"toolbar_classic_block":"formatselect,bold,italic,underline,strikethrough,superscript,subscript,bullist,numlist,alignleft,aligncenter,alignright,link,unlink,styleselect,removeformat,forecolor,backcolor,blockquote",
 		"toolbar_block":"core\/bold,core\/italic,core\/link,tadv\/removeformat",
 		"toolbar_block_side":[],
 		"panels_block":"",
