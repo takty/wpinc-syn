@@ -14,7 +14,7 @@
 	const { PluginPostStatusInfo }   = wp.editPost;
 	const { registerPlugin }         = wp.plugins;
 
-	const PMK_STICKY = wpinc_sticky.PMK_STICKY;
+	const PMK = wpinc_sticky.PMK;
 
 	const MetaBlockField = () => {
 		const { postMeta } = useSelect((select) => {
@@ -22,12 +22,12 @@
 				postMeta: select('core/editor').getEditedPostAttribute('meta'),
 			};
 		});
-		const { editPost } = useDispatch('core/editor', [postMeta[PMK_STICKY]]);
+		const { editPost } = useDispatch('core/editor', [postMeta[PMK]]);
 
 		return el(CheckboxControl, {
 			label   : __('Stick this post at the top', 'wpinc'),
-			checked : postMeta[PMK_STICKY],
-			onChange: (value) => editPost({ meta: { [PMK_STICKY]: value ? 1 : null } }),
+			checked : postMeta[PMK],
+			onChange: (value) => editPost({ meta: { [PMK]: value ? 1 : null } }),
 		});
 	};
 

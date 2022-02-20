@@ -66,9 +66,10 @@ function add_post_type( $post_type_s ): void {
 
 /**
  * Initializes hooks.
+ *
+ * @access private
  */
 function _initialize_hooks(): void {
-	// Common hooks.
 	if ( is_admin() ) {
 		// For indication in post lists.
 		add_filter( 'display_post_states', '\wpinc\sys\sticky\_cb_display_post_states', 10, 2 );
@@ -148,6 +149,8 @@ function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
 
 /**
  * Callback function for 'enqueue_block_editor_assets' action.
+ *
+ * @access private
  */
 function _cb_enqueue_block_editor_assets(): void {
 	$inst = _get_instance();
@@ -160,7 +163,7 @@ function _cb_enqueue_block_editor_assets(): void {
 			filemtime( __DIR__ . '/assets/js/sticky.min.js' ),
 			true
 		);
-		wp_localize_script( 'wpinc-sticky', 'wpinc_sticky', array( 'PMK_STICKY' => '_sticky' ) );
+		wp_localize_script( 'wpinc-sticky', 'wpinc_sticky', array( 'PMK' => PMK_STICKY ) );
 		wp_set_script_translations( 'wpinc-sticky', 'wpinc', __DIR__ . '/languages' );
 	}
 }
@@ -183,24 +186,14 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	}
 	wp_nonce_field( '_wpinc_sticky', '_wpinc_sticky_nonce' );
 	$sticky = get_post_meta( get_the_ID(), PMK_STICKY, true );
-
-	if ( get_current_screen()->is_block_editor() ) {
-		?>
-		<label>
+	?>
+	<div class="misc-pub-section">
+		<label style="margin-left:18px;">
 			<input type="checkbox" name="_wpinc_sticky" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
 			<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'wpinc_sys' ); ?></span>
 		</label>
-		<?php
-	} else {
-		?>
-		<div class="misc-pub-section">
-			<label style="margin-left:18px;">
-				<input type="checkbox" name="_wpinc_sticky" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
-				<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'wpinc_sys' ); ?></span>
-			</label>
-		</div>
-		<?php
-	}
+	</div>
+	<?php
 }
 
 /**
