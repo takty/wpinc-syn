@@ -12,19 +12,6 @@ namespace wpinc\sys\ip_restriction;
 const PMK_IP_RESTRICTION = '_ip_restriction';
 
 /**
- * Activates IP restriction.
- */
-function activate(): void {
-	if ( is_admin() ) {
-		add_action( 'post_submitbox_misc_actions', '\wpinc\sys\ip_restriction\_cb_post_submitbox_misc_actions' );
-		add_action( 'save_post', '\wpinc\sys\ip_restriction\_cb_save_post', 10, 2 );
-	} else {
-		add_action( 'pre_get_posts', '\wpinc\sys\ip_restriction\_cb_pre_get_posts' );
-		add_filter( 'body_class', '\wpinc\sys\ip_restriction\_cb_body_class' );
-	}
-}
-
-/**
  * Adds CIDR.
  *
  * @param string $cidr Allowed CIDR.
@@ -48,6 +35,24 @@ function add_post_type( $post_type_s ): void {
 	$inst = _get_instance();
 	$pts  = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
 
+	foreach ( $pts as $pt ) {
+		register_post_meta(
+			$pt,
+			PMK_IP_RESTRICTION,
+			array(
+				'type'          => 'boolean',
+				'default'       => false,
+				'single'        => true,
+				'show_in_rest'  => true,
+				'auth_callback' => function() {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+	}
+	if ( empty( $inst->post_types ) ) {
+		_initialize_hooks();
+	}
 	array_push( $inst->post_types, ...$pt );
 }
 
@@ -84,6 +89,35 @@ function is_allowed(): bool {
 function is_restricted(): bool {
 	$inst = _get_instance();
 	return $inst->is_restricted;
+}
+
+/**
+ * Initializes hooks.
+ *
+ * @access private
+ */
+function _initialize_hooks(): void {
+	if ( ! is_admin() ) {
+		add_action( 'pre_get_posts', '\wpinc\sys\ip_restriction\_cb_pre_get_posts' );
+		add_filter( 'body_class', '\wpinc\sys\ip_restriction\_cb_body_class' );
+	}
+
+	if ( is_admin() ) {
+		add_action(
+			'current_screen',  // For using is_block_editor().
+			function () {
+				global $pagenow;
+				if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
+					if ( get_current_screen()->is_block_editor() ) {
+						add_action( 'enqueue_block_editor_assets', '\wpinc\sys\ip_restriction\_cb_enqueue_block_editor_assets' );
+					} else {
+						add_action( 'post_submitbox_misc_actions', '\wpinc\sys\ip_restriction\_cb_post_submitbox_misc_actions' );
+						add_action( 'save_post', '\wpinc\sys\ip_restriction\_cb_save_post', 10, 2 );
+					}
+				}
+			}
+		);
+	}
 }
 
 
@@ -171,6 +205,35 @@ function _cb_body_class( array $classes ) {
 	}
 	return $classes;
 }
+
+
+// ---------------------------------------- Callback Functions for Block Editor.
+
+
+/**
+ * Callback function for 'enqueue_block_editor_assets' action.
+ *
+ * @access private
+ */
+function _cb_enqueue_block_editor_assets(): void {
+	$inst = _get_instance();
+	if ( in_array( get_current_screen()->id, $inst->post_types, true ) ) {
+		$url_to = untrailingslashit( \wpinc\get_file_uri( __DIR__ ) );
+		wp_enqueue_script(
+			'wpinc-ip-restriction',
+			\wpinc\abs_url( $url_to, './assets/js/ip-restriction.min.js' ),
+			array( 'wp-element', 'wp-i18n', 'wp-data', 'wp-components', 'wp-edit-post', 'wp-plugins' ),
+			filemtime( __DIR__ . '/assets/js/ip-restriction.min.js' ),
+			true
+		);
+		wp_localize_script( 'wpinc-ip-restriction', 'wpinc_ip_restriction', array( 'PMK' => PMK_IP_RESTRICTION ) );
+		wp_set_script_translations( 'wpinc-ip-restriction', 'wpinc', __DIR__ . '/languages' );
+	}
+}
+
+
+// -------------------------------------- Callback Functions for Classic Editor.
+
 
 /**
  * Callback function for 'post_submitbox_misc_actions' action.
