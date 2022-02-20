@@ -53,7 +53,7 @@ function add_post_type( $post_type_s ): void {
 	if ( empty( $inst->post_types ) ) {
 		_initialize_hooks();
 	}
-	array_push( $inst->post_types, ...$pt );
+	array_push( $inst->post_types, ...$pts );
 }
 
 /**
@@ -62,6 +62,8 @@ function add_post_type( $post_type_s ): void {
  * @return bool True if the IP is OK.
  */
 function is_allowed(): bool {
+	$inst = _get_instance();
+
 	static $checked = 0;
 	if ( $checked++ ) {
 		return $inst->is_allowed;
@@ -188,6 +190,11 @@ function _cb_pre_get_posts( \WP_Query $query ): void {
 	if ( ! empty( $ex_ps ) ) {
 		$query->set( 'post__not_in', $ex_ps );
 		$inst->is_restricted = true;
+
+		$p = $query->get( 'p' );
+		if ( in_array( $p, $ex_ps, true ) ) {
+			$query->set_404();
+		}
 	}
 }
 
