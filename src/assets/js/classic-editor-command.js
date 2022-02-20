@@ -1,8 +1,8 @@
 /**
- * Editor Commands for TinyMCE
+ * Classic Editor Commands
  *
  * @author Takuto Yanagida
- * @version 2022-02-07
+ * @version 2022-02-20
  */
 
 (function () {
