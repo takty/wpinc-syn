@@ -25,7 +25,7 @@
 		const { editPost } = useDispatch('core/editor', [postMeta[PMK]]);
 
 		return el(CheckboxControl, {
-			label   : __('Stick this post at the top', 'wpinc'),
+			label   : __('IP Restriction', 'wpinc'),
 			checked : postMeta[PMK],
 			onChange: (value) => editPost({ meta: { [PMK]: value ? 1 : null } }),
 		});
