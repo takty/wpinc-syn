@@ -1,0 +1,15 @@
+{
+	"domain": "messages",
+	"locale_data": {
+		"messages": {
+			"": {
+				"domain": "wpinc",
+				"plural_forms": "nplurals=1; plural=0;",
+				"lang": "ja"
+			},
+			"Stick this post at the top": [
+				"この投稿を先頭に固定表示"
+			]
+		}
+	}
+}

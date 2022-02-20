@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-14
+ * @version 2022-02-20
  */
 
 namespace wpinc\sys\sticky;
@@ -43,6 +43,21 @@ function add_post_type( $post_type_s ): void {
 	$inst = _get_instance();
 	$pts  = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
 
+	foreach ( $pts as $pt ) {
+		register_post_meta(
+			$pt,
+			PMK_STICKY,
+			array(
+				'type'          => 'boolean',
+				'default'       => false,
+				'single'        => true,
+				'show_in_rest'  => true,
+				'auth_callback' => function() {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+	}
 	if ( empty( $inst->post_types ) ) {
 		_initialize_hooks();
 	}
@@ -53,26 +68,36 @@ function add_post_type( $post_type_s ): void {
  * Initializes hooks.
  */
 function _initialize_hooks(): void {
+	// Common hooks.
 	if ( is_admin() ) {
+		// For indication in post lists.
 		add_filter( 'display_post_states', '\wpinc\sys\sticky\_cb_display_post_states', 10, 2 );
-		add_action( 'save_post', '\wpinc\sys\sticky\_cb_save_post', 10, 2 );
+	} else {
+		// For adding 'sticky' to the article classes.
+		add_filter( 'post_class', '\wpinc\sys\sticky\_cb_post_class', 10, 3 );
+	}
+
+	if ( is_admin() ) {
 		add_action(
 			'current_screen',  // For using is_block_editor().
 			function () {
 				global $pagenow;
 				if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
 					if ( get_current_screen()->is_block_editor() ) {
-						add_action( 'add_meta_boxes', '\wpinc\sys\sticky\_cb_add_meta_boxes', 10, 2 );
+						add_action( 'enqueue_block_editor_assets', '\wpinc\sys\sticky\_cb_enqueue_block_editor_assets' );
 					} else {
 						add_action( 'post_submitbox_misc_actions', '\wpinc\sys\sticky\_cb_post_submitbox_misc_actions' );
+						add_action( 'save_post', '\wpinc\sys\sticky\_cb_save_post', 10, 2 );
 					}
 				}
 			}
 		);
-	} else {
-		add_filter( 'post_class', '\wpinc\sys\sticky\_cb_post_class', 10, 3 );
 	}
 }
+
+
+// -----------------------------------------------------------------------------
+
 
 /**
  * Callback function for 'post_class' filter.
@@ -117,6 +142,33 @@ function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
 	return $post_states;
 }
 
+
+// ---------------------------------------- Callback Functions for Block Editor.
+
+
+/**
+ * Callback function for 'enqueue_block_editor_assets' action.
+ */
+function _cb_enqueue_block_editor_assets(): void {
+	$inst = _get_instance();
+	if ( in_array( get_current_screen()->id, $inst->post_types, true ) ) {
+		$url_to = untrailingslashit( \wpinc\get_file_uri( __DIR__ ) );
+		wp_enqueue_script(
+			'wpinc-sticky',
+			\wpinc\abs_url( $url_to, './assets/js/sticky.min.js' ),
+			array( 'wp-element', 'wp-i18n', 'wp-data', 'wp-components', 'wp-edit-post', 'wp-plugins' ),
+			filemtime( __DIR__ . '/assets/js/sticky.min.js' ),
+			true
+		);
+		wp_localize_script( 'wpinc-sticky', 'wpinc_sticky', array( 'PMK_STICKY' => '_sticky' ) );
+		wp_set_script_translations( 'wpinc-sticky', 'wpinc', __DIR__ . '/languages' );
+	}
+}
+
+
+// -------------------------------------- Callback Functions for Classic Editor.
+
+
 /**
  * Callback function for 'post_submitbox_misc_actions' action.
  *
@@ -149,27 +201,6 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 		</div>
 		<?php
 	}
-}
-
-/**
- * Callback function for 'add_meta_boxes' action.
- * For adding metabox to block editor.
- *
- * @param string   $post_type Post type.
- * @param \WP_Post $post      Post object.
- */
-function _cb_add_meta_boxes( string $post_type, \WP_Post $post ): void {
-	$inst = _get_instance();
-	\add_meta_box(
-		'_wpinc_sticky_mb',
-		__( 'Sticky' ),
-		function ( \WP_Post $post ) {
-			_cb_post_submitbox_misc_actions( $post );
-		},
-		$post_type,
-		'side',
-		'high'
-	);
 }
 
 /**
