@@ -2,7 +2,7 @@
  * Gulp file
  *
  * @author Takuto Yanagida
- * @version 2022-02-09
+ * @version 2022-02-20
  */
 
 /* eslint-disable no-undef */
@@ -15,44 +15,46 @@ const SRC_CSS_RAW = ['src/**/*.css', '!src/**/*.min.css'];
 const SRC_CSS_MIN = ['src/**/*.min.css'];
 const SRC_PHP     = ['src/**/*.php'];
 const SRC_IMG     = ['src/**/*.png'];
-const SRC_LOCALE  = ['src/languages/**/*.po'];
+const SRC_PO      = ['src/languages/**/*.po', '!src/languages/**/wpinc-*.po'];
+const SRC_JSON    = ['src/languages/**/*.json'];
 const DIST        = './dist';
 
 const SASS_OUTPUT_STYLE = 'compressed';  // 'expanded' or 'compressed'
 
-const gulp = require('gulp');
-const $ = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
+const gulp      = require('gulp');
+const gulp_sass = require('gulp-sass')(require('sass'));
+const $         = require('gulp-load-plugins')({ pattern: ['gulp-*', '!gulp-sass'] });
 
 
 // -----------------------------------------------------------------------------
 
 
-gulp.task('js-raw', () => {
+const js_raw = () => {
 	if (SRC_JS_RAW.length === 0) return done();
 	return gulp.src(SRC_JS_RAW, { base: 'src' })
 		.pipe($.plumber())
 		.pipe($.babel())
 		.pipe($.terser())
-		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents, extension: '.min.js' }))
 		.pipe($.rename({ extname: '.min.js' }))
-		.pipe(gulp.dest(DIST));
-});
+		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest(DIST, { sourcemaps: '.' }));
+};
 
-gulp.task('js-min', () => {
+const js_min = () => {
 	if (SRC_JS_MIN.length === 0) return done();
 	return gulp.src(SRC_JS_MIN)
 		.pipe($.plumber())
 		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
 		.pipe(gulp.dest(DIST));
-});
+};
 
-gulp.task('js', gulp.parallel('js-raw', 'js-min'));
+const js = gulp.parallel(js_raw, js_min);
 
 
 // -----------------------------------------------------------------------------
 
 
-gulp.task('sass', () => {
+const sass = () => {
 	if (SRC_SASS.length === 0) return done();
 	return gulp.src(SRC_SASS)
 		.pipe($.plumber({
@@ -61,85 +63,92 @@ gulp.task('sass', () => {
 				this.emit('end');
 			}
 		}))
-		.pipe($.sourcemaps.init())
-		.pipe($.dartSass({ outputStyle: SASS_OUTPUT_STYLE }))
+		.pipe(gulp_sass({ outputStyle: SASS_OUTPUT_STYLE }))
 		.pipe($.autoprefixer({ remove: false }))
-		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents, extension: '.min.js' }))
 		.pipe($.rename({ extname: '.min.css' }))
-		.pipe($.sourcemaps.write('.'))
-		.pipe(gulp.dest(DIST));
-});
+		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest(DIST, { sourcemaps: '.' }));
+};
 
-gulp.task('css-raw', () => {
+const css_raw = () => {
 	if (SRC_CSS_RAW.length === 0) return done();
 	return gulp.src(SRC_CSS_RAW, { base: 'src' })
 		.pipe($.plumber())
-		.pipe($.sourcemaps.init())
 		.pipe($.cleanCss())
-		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents, extension: '.min.js' }))
 		.pipe($.rename({ extname: '.min.css' }))
-		.pipe($.sourcemaps.write('.'))
-		.pipe(gulp.dest(DIST));
-});
+		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest(DIST, { sourcemaps: '.' }));
+};
 
-gulp.task('css-min', () => {
+const css_min = () => {
 	if (SRC_CSS_MIN.length === 0) return done();
 	return gulp.src(SRC_CSS_MIN)
 		.pipe($.plumber())
 		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
 		.pipe(gulp.dest(DIST));
-});
+};
 
-gulp.task('css', gulp.parallel('sass', 'css-raw', 'css-min'));
+const css = gulp.parallel(sass, css_raw, css_min);
 
 
 // -----------------------------------------------------------------------------
 
 
-gulp.task('php', () => {
+const php = () => {
 	if (SRC_PHP.length === 0) return done();
 	return gulp.src(SRC_PHP)
 		.pipe($.plumber())
 		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
 		.pipe(gulp.dest(DIST));
-});
+};
 
-gulp.task('img', () => {
+const img = () => {
 	if (SRC_IMG.length === 0) return done();
 	return gulp.src(SRC_IMG)
 		.pipe($.plumber())
 		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
 		.pipe(gulp.dest(DIST));
-});
+};
 
 
 // -----------------------------------------------------------------------------
 
 
-gulp.task('locale', function () {
-	if (SRC_LOCALE.length === 0) return done();
-	return gulp.src(SRC_LOCALE, { base: 'src' })
+const po = () => {
+	if (SRC_PO.length === 0) return done();
+	return gulp.src(SRC_PO, { base: 'src' })
 		.pipe($.plumber())
 		.pipe($.gettext())
-		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents, extension: '.mo' }))
+		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
 		.pipe(gulp.dest(DIST));
-});
+};
+
+const json = () => {
+	if (SRC_JSON.length === 0) return done();
+	return gulp.src(SRC_JSON, { base: 'src' })
+		.pipe($.plumber())
+		.pipe($.changed(DIST, { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest(DIST));
+};
+
+const locale = gulp.parallel(po, json);
 
 
 // -----------------------------------------------------------------------------
 
 
-gulp.task('watch', () => {
-	gulp.watch(SRC_JS_RAW, gulp.series('js-raw'));
-	gulp.watch(SRC_JS_MIN, gulp.series('js-min'));
-	gulp.watch(SRC_SASS, gulp.series('sass'));
-	gulp.watch(SRC_CSS_RAW, gulp.series('css-raw'));
-	gulp.watch(SRC_CSS_MIN, gulp.series('css-min'));
-	gulp.watch(SRC_PHP, gulp.series('php'));
-	gulp.watch(SRC_IMG, gulp.series('img'));
-	gulp.watch(SRC_LOCALE, gulp.series('locale'));
-});
+const watch = () => {
+	gulp.watch(SRC_JS_RAW, js_raw);
+	gulp.watch(SRC_JS_MIN, js_min);
+	gulp.watch(SRC_SASS, sass);
+	gulp.watch(SRC_CSS_RAW, css_raw);
+	gulp.watch(SRC_CSS_MIN, css_min);
+	gulp.watch(SRC_PHP, php);
+	gulp.watch(SRC_IMG, img);
+	gulp.watch(SRC_PO, locale);
+	gulp.watch(SRC_JSON, locale);
+};
 
-gulp.task('build', gulp.parallel('js', 'css', 'php', 'img', 'locale'));
+exports.build = gulp.parallel(js, css, php, img, locale);
 
-gulp.task('default', gulp.series('build', 'watch'));
+exports.default = gulp.series(exports.build, watch);
