@@ -99,7 +99,10 @@ function is_restricted(): bool {
  * @access private
  */
 function _initialize_hooks(): void {
-	if ( ! is_admin() ) {
+	if ( is_admin() ) {
+		// For indication in post lists.
+		add_filter( 'display_post_states', '\wpinc\sys\ip_restriction\_cb_display_post_states', 10, 2 );
+	} else {
 		add_action( 'pre_get_posts', '\wpinc\sys\ip_restriction\_cb_pre_get_posts' );
 		add_filter( 'body_class', '\wpinc\sys\ip_restriction\_cb_body_class' );
 	}
@@ -211,6 +214,27 @@ function _cb_body_class( array $classes ) {
 		array_push( $classes, ...$inst->current_body_classes );
 	}
 	return $classes;
+}
+
+/**
+ * Callback function for 'display_post_states' filter.
+ *
+ * @access private
+ *
+ * @param string[] $post_states An array of post display states.
+ * @param \WP_Post $post        The current post object.
+ * @return string[] The filtered states.
+ */
+function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
+	$inst = _get_instance();
+	if ( ! in_array( get_post_type( $post ), $inst->post_types, true ) ) {
+		return $post_states;
+	}
+	$is_sticky = get_post_meta( $post->ID, PMK_IP_RESTRICTION, true );
+	if ( $is_sticky ) {
+		$post_states['ip_restriction'] = _x( 'IP Restriction', 'ip restriction', 'wpinc_sys' );
+	}
+	return $post_states;
 }
 
 
