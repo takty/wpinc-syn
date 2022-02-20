@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-07
+ * @version 2022-02-20
  */
 
 namespace wpinc\sys\ip_restriction;
@@ -206,16 +206,12 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
  */
 function _cb_save_post( int $post_id, \WP_Post $post ): void {
 	$inst = _get_instance();
-	if ( ! in_array( $post->post_type, $inst->post_types, true ) ) {
-		return;
-	}
-	if ( ! isset( $_POST['_wpinc_ip_restriction_nonce'] ) ) {
-		return;
-	}
-	if ( ! wp_verify_nonce( sanitize_key( $_POST['_wpinc_ip_restriction_nonce'] ), '_wpinc_ip_restriction' ) ) {
-		return;
-	}
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+	if (
+		! in_array( $post->post_type, $inst->post_types, true ) ||
+		! isset( $_POST['_wpinc_ip_restriction_nonce'] ) ||
+		! wp_verify_nonce( sanitize_key( $_POST['_wpinc_ip_restriction_nonce'] ), '_wpinc_ip_restriction' ) ||
+		defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE
+	) {
 		return;
 	}
 	if ( isset( $_POST['_wpinc_ip_restriction'] ) ) {
