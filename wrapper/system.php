@@ -4,7 +4,7 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-02-15
+ * @version 2022-02-20
  */
 
 namespace sample {
@@ -244,13 +244,6 @@ namespace sample\classic_editor {
 
 namespace sample\ip_restriction {
 	require_once __DIR__ . '/sys/ip-restriction.php';
-
-	/**
-	 * Activates IP restriction.
-	 */
-	function activate(): void {
-		\wpinc\sys\ip_restriction\activate();
-	}
 
 	/**
 	 * Adds CIDR.
