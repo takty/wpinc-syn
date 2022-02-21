@@ -4,7 +4,7 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-02-20
+ * @version 2022-02-21
  */
 
 namespace sample {
@@ -76,10 +76,10 @@ namespace sample {
 	/**
 	 * Echo edit post link of menus when available.
 	 *
-	 * @param int    $menu_id Menu ID to edit.
-	 * @param string $cls     CSS Class.
+	 * @param int|null $menu_id Menu ID to edit.
+	 * @param string   $cls     CSS Class.
 	 */
-	function the_admin_edit_menu( int $menu_id, string $cls = '' ): void {
+	function the_admin_edit_menu( ?int $menu_id, string $cls = '' ): void {
 		\wpinc\sys\the_admin_edit_menu( $menu_id, $cls );
 	}
 

@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-31
+ * @version 2022-02-21
  */
 
 namespace wpinc\sys;
@@ -27,11 +27,11 @@ function the_admin_edit_post( string $cls = '' ): void {
 /**
  * Echo edit post link of menus when available.
  *
- * @param int    $menu_id Menu ID to edit.
- * @param string $cls     CSS Class.
+ * @param int|null $menu_id Menu ID to edit.
+ * @param string   $cls     CSS Class.
  */
-function the_admin_edit_menu( int $menu_id, string $cls = '' ): void {
-	if ( can_edit_theme_options() ) {
+function the_admin_edit_menu( ?int $menu_id, string $cls = '' ): void {
+	if ( null !== $menu_id && can_edit_theme_options() ) {
 		?>
 		<div class="admin-edit<?php echo esc_attr( ' ' . $cls ); ?>">
 			<a href="<?php the_edit_link_menu( $menu_id ); ?>">EDIT</a>
