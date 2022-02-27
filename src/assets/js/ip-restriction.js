@@ -1,40 +1,39 @@
 /**
- * Block Editor Plugin for IP Restriction
+ * IP Restriction Plugin
  *
  * @author Takuto Yanagida
- * @version 2022-02-20
+ * @version 2022-02-27
  */
 
 (() => {
-	const el = wp.element.createElement;
+	const {
+		data      : { useSelect },
+		coreData  : { useEntityProp },
+		plugins   : { registerPlugin },
+		element   : { createElement: el },
+		components: { CheckboxControl },
+		editPost  : { PluginPostStatusInfo },
+	} = wp;
 
-	const { __ }                     = wp.i18n;
-	const { useSelect, useDispatch } = wp.data;
-	const { CheckboxControl }        = wp.components;
-	const { PluginPostStatusInfo }   = wp.editPost;
-	const { registerPlugin }         = wp.plugins;
+	const meta_keys = wpinc_ip_restriction.meta_keys ?? ['_ip_restriction'];
+	const labels    = wpinc_ip_restriction.labels    ?? ['IP Restriction'];
 
-	const PMK = wpinc_ip_restriction.PMK;
-
-	const MetaBlockField = () => {
-		const { postMeta } = useSelect((select) => {
-			return {
-				postMeta: select('core/editor').getEditedPostAttribute('meta'),
-			};
-		});
-		const { editPost } = useDispatch('core/editor', [postMeta[PMK]]);
+	const MetaField = ({ meta_key, label }) => {
+		const pt              = useSelect(s => s('core/editor').getCurrentPostType(), []);
+		const [meta, setMeta] = useEntityProp('postType', pt, 'meta');
+		const updateMeta      = (k, v) => setMeta({ ...meta, [k]: (v ? v : null) });
 
 		return el(CheckboxControl, {
-			label   : __('IP Restriction', 'wpinc'),
-			checked : postMeta[PMK],
-			onChange: (value) => editPost({ meta: { [PMK]: value ? 1 : null } }),
+			label,
+			checked : meta[meta_key],
+			onChange: v => updateMeta(meta_key, v),
 		});
 	};
 
 	const render = () => el(
 		PluginPostStatusInfo,
 		{},
-		el(MetaBlockField)
+		_.zip(meta_keys, labels).map(([meta_key, label]) => el(MetaField, { meta_key, label }))
 	);
 
 	registerPlugin('wpinc-ip-restriction', { render });

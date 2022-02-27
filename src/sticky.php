@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-20
+ * @version 2022-02-27
  */
 
 namespace wpinc\sys\sticky;
@@ -35,18 +35,44 @@ function disable_embedded_sticky(): void {
 
 
 /**
+ * Initialize custom sticky.
+ *
+ * @param array $args Arguments.
+ */
+function initialize( array $args = array() ): void {
+	$args += array(
+		'meta_key'   => '_sticky',  // phpcs:ignore
+		'post_type'  => array(),
+		'label'      => _x( 'Stick this post at the top', 'sticky', 'wpinc_sys' ),
+		'post_class' => 'sticky',
+		'post_state' => _x( 'Sticky', 'post status' ),
+	);
+
+	_get_instance()->settings[ $args['meta_key'] ] = $args;  // phpcs:ignore
+}
+
+/**
  * Makes custom post type sticky.
  *
  * @param string|string[] $post_type_s Post types.
+ * @param string          $meta_key    post meta key used for sticky.
  */
-function add_post_type( $post_type_s ): void {
+function add_post_type( $post_type_s, string $meta_key = PMK_STICKY ) {
 	$inst = _get_instance();
 	$pts  = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
+
+	if ( empty( $inst->settings ) ) {
+		initialize();
+	}
+	$setting = $inst->settings[ $meta_key ] ?? null;
+	if ( null === $setting ) {
+		return new \WP_Error( 'unknown_meta_key', __( 'The meta key is not registered.' ) );
+	}
 
 	foreach ( $pts as $pt ) {
 		register_post_meta(
 			$pt,
-			PMK_STICKY,
+			$meta_key,
 			array(
 				'type'          => 'boolean',
 				'default'       => false,
@@ -58,10 +84,13 @@ function add_post_type( $post_type_s ): void {
 			)
 		);
 	}
-	if ( empty( $inst->post_types ) ) {
+	static $initialized = false;
+	if ( ! $initialized ) {
 		_initialize_hooks();
+		$initialized = true;
 	}
-	array_push( $inst->post_types, ...$pts );
+	array_push( $setting['post_type'], ...$pts );
+	$inst->settings[ $meta_key ] = $setting;
 }
 
 /**
@@ -96,6 +125,24 @@ function _initialize_hooks(): void {
 	}
 }
 
+/**
+ * Extracts post type specific setting.
+ *
+ * @access private
+ *
+ * @param string $post_type Post type.
+ * @return array Setting.
+ */
+function _extract_post_type_specific_setting( string $post_type ): array {
+	$inst = _get_instance();
+	return array_filter(
+		$inst->settings,
+		function ( $s ) use ( $post_type ) {
+			return in_array( $post_type, $s['post_type'], true );
+		}
+	);
+}
+
 
 // -----------------------------------------------------------------------------
 
@@ -112,12 +159,13 @@ function _initialize_hooks(): void {
  */
 function _cb_post_class( array $classes, array $class, int $post_id ): array {
 	$inst = _get_instance();
-	if ( ! in_array( get_post_type( $post_id ), $inst->post_types, true ) ) {
-		return $classes;
-	}
-	$is_sticky = get_post_meta( $post_id, PMK_STICKY, true );
-	if ( $is_sticky ) {
-		$classes[] = 'sticky';
+	foreach ( $inst->settings as $key => $setting ) {
+		if ( in_array( get_post_type( $post_id ), $setting['post_type'], true ) ) {
+			$is_sticky = get_post_meta( $post_id, $setting['meta_key'], true );
+			if ( $is_sticky ) {
+				$classes[] = $setting['post_class'];
+			}
+		}
 	}
 	return $classes;
 }
@@ -133,12 +181,13 @@ function _cb_post_class( array $classes, array $class, int $post_id ): array {
  */
 function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
 	$inst = _get_instance();
-	if ( ! in_array( get_post_type( $post ), $inst->post_types, true ) ) {
-		return $post_states;
-	}
-	$is_sticky = get_post_meta( $post->ID, PMK_STICKY, true );
-	if ( $is_sticky ) {
-		$post_states['sticky'] = _x( 'Sticky', 'post status' );
+	foreach ( $inst->settings as $key => $setting ) {
+		if ( in_array( get_post_type( $post ), $setting['post_type'], true ) ) {
+			$is_sticky = get_post_meta( $post->ID, $setting['meta_key'], true );
+			if ( $is_sticky ) {
+				$post_states[ $setting['class'] ] = $setting['post_state'];
+			}
+		}
 	}
 	return $post_states;
 }
@@ -154,18 +203,26 @@ function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
  */
 function _cb_enqueue_block_editor_assets(): void {
 	$inst = _get_instance();
-	if ( in_array( get_current_screen()->id, $inst->post_types, true ) ) {
-		$url_to = untrailingslashit( \wpinc\get_file_uri( __DIR__ ) );
-		wp_enqueue_script(
-			'wpinc-sticky',
-			\wpinc\abs_url( $url_to, './assets/js/sticky.min.js' ),
-			array( 'wp-element', 'wp-i18n', 'wp-data', 'wp-components', 'wp-edit-post', 'wp-plugins' ),
-			filemtime( __DIR__ . '/assets/js/sticky.min.js' ),
-			true
-		);
-		wp_localize_script( 'wpinc-sticky', 'wpinc_sticky', array( 'PMK' => PMK_STICKY ) );
-		wp_set_script_translations( 'wpinc-sticky', 'wpinc', __DIR__ . '/languages' );
+	$ss   = _extract_post_type_specific_setting( get_current_screen()->id );
+	if ( empty( $ss ) ) {
+		return;
 	}
+	$url_to = untrailingslashit( \wpinc\get_file_uri( __DIR__ ) );
+	wp_enqueue_script(
+		'wpinc-sticky',
+		\wpinc\abs_url( $url_to, './assets/js/sticky.min.js' ),
+		array( 'wp-element', 'wp-i18n', 'wp-data', 'wp-components', 'wp-edit-post', 'wp-plugins' ),
+		filemtime( __DIR__ . '/assets/js/sticky.min.js' ),
+		true
+	);
+	wp_localize_script(
+		'wpinc-sticky',
+		'wpinc_sticky',
+		array(
+			'meta_keys' => array_column( $ss, 'meta_key' ),
+			'labels'    => array_column( $ss, 'label' ),
+		)
+	);
 }
 
 
@@ -181,19 +238,22 @@ function _cb_enqueue_block_editor_assets(): void {
  */
 function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	$inst = _get_instance();
-	if ( ! in_array( $post->post_type, $inst->post_types, true ) ) {
+	$ss   = _extract_post_type_specific_setting( $post->post_type );
+	if ( empty( $ss ) ) {
 		return;
 	}
 	wp_nonce_field( '_wpinc_sticky', '_wpinc_sticky_nonce' );
-	$sticky = get_post_meta( get_the_ID(), PMK_STICKY, true );
-	?>
-	<div class="misc-pub-section">
-		<label style="margin-left:18px;">
-			<input type="checkbox" name="_wpinc_sticky" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
-			<span class="checkbox-title"><?php echo esc_html_x( 'Stick this post at the top', 'sticky', 'wpinc_sys' ); ?></span>
-		</label>
-	</div>
-	<?php
+	foreach ( $ss as $s ) {
+		$sticky = get_post_meta( get_the_ID(), $s['meta_key'], true );
+		?>
+		<div class="misc-pub-section">
+			<label style="margin-left:18px;">
+				<input type="checkbox" name="_wpinc<?php echo esc_attr( $s['meta_key'] ); ?>" value="1" <?php echo esc_attr( $sticky ? ' checked' : '' ); ?>>
+				<span class="checkbox-title"><?php echo esc_html( $s['label'] ); ?></span>
+			</label>
+		</div>
+		<?php
+	}
 }
 
 /**
@@ -206,18 +266,23 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
  */
 function _cb_save_post( int $post_id, \WP_Post $post ): void {
 	$inst = _get_instance();
+	$ss   = _extract_post_type_specific_setting( $post->post_type );
+	if ( empty( $ss ) ) {
+		return;
+	}
 	if (
-		! in_array( $post->post_type, $inst->post_types, true ) ||
 		! isset( $_POST['_wpinc_sticky_nonce'] ) ||
 		! wp_verify_nonce( sanitize_key( $_POST['_wpinc_sticky_nonce'] ), '_wpinc_sticky' ) ||
 		defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE
 	) {
 		return;
 	}
-	if ( isset( $_POST['_wpinc_sticky'] ) ) {
-		update_post_meta( $post_id, PMK_STICKY, '1' );
-	} else {
-		delete_post_meta( $post_id, PMK_STICKY );
+	foreach ( $ss as $s ) {
+		if ( isset( $_POST[ "_wpinc{$s['meta_key']}" ] ) ) {
+			update_post_meta( $post_id, $s['meta_key'], '1' );
+		} else {
+			delete_post_meta( $post_id, $s['meta_key'] );
+		}
 	}
 }
 
@@ -239,11 +304,11 @@ function _get_instance(): object {
 	}
 	$values = new class() {
 		/**
-		 * The target post types.
+		 * Settings.
 		 *
 		 * @var array
 		 */
-		public $post_types = array();
+		public $settings = array();
 	};
 	return $values;
 }

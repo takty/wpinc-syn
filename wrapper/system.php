@@ -4,7 +4,7 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-02-21
+ * @version 2022-02-27
  */
 
 namespace sample {
@@ -317,12 +317,22 @@ namespace sample\sticky {
 	}
 
 	/**
+	 * Initialize custom sticky.
+	 *
+	 * @param array $args Arguments.
+	 */
+	function initialize( array $args = array() ): void {
+		\wpinc\sys\sticky\initialize( $args );
+	}
+
+	/**
 	 * Makes custom post type sticky.
 	 *
 	 * @param string|string[] $post_type_s Post types.
+	 * @param string          $meta_key    post meta key used for sticky.
 	 */
-	function add_post_type( $post_type_s ): void {
-		\wpinc\sys\sticky\add_post_type( $post_type_s );
+	function add_post_type( $post_type_s, string $meta_key = PMK_STICKY ) {
+		return \wpinc\sys\sticky\add_post_type( $post_type_s );
 	}
 }
 

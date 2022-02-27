@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-20
+ * @version 2022-02-27
  */
 
 namespace wpinc\sys\ip_restriction;
@@ -257,8 +257,14 @@ function _cb_enqueue_block_editor_assets(): void {
 			filemtime( __DIR__ . '/assets/js/ip-restriction.min.js' ),
 			true
 		);
-		wp_localize_script( 'wpinc-ip-restriction', 'wpinc_ip_restriction', array( 'PMK' => PMK_IP_RESTRICTION ) );
-		wp_set_script_translations( 'wpinc-ip-restriction', 'wpinc', __DIR__ . '/languages' );
+		wp_localize_script(
+			'wpinc-ip-restriction',
+			'wpinc_ip_restriction',
+			array(
+				'meta_keys' => array( PMK_IP_RESTRICTION ),
+				'labels'    => array( _x( 'IP Restriction', 'ip restriction', 'wpinc_sys' ) ),
+			)
+		);
 	}
 }
 
