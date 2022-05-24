@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-27
+ * @version 2022-05-24
  */
 
 namespace wpinc\sys\sticky;
@@ -185,7 +185,7 @@ function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
 		if ( in_array( get_post_type( $post ), $setting['post_type'], true ) ) {
 			$is_sticky = get_post_meta( $post->ID, $setting['meta_key'], true );
 			if ( $is_sticky ) {
-				$post_states[ $setting['class'] ] = $setting['post_state'];
+				$post_states[ $setting['post_class'] ] = $setting['post_state'];
 			}
 		}
 	}
