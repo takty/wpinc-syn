@@ -4,7 +4,7 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-02-28
+ * @version 2022-06-08
  */
 
 namespace sample {
@@ -332,7 +332,7 @@ namespace sample\sticky {
 	 * @param string          $meta_key    post meta key used for sticky.
 	 */
 	function add_post_type( $post_type_s, string $meta_key = \wpinc\sys\sticky\PMK_STICKY ) {
-		return \wpinc\sys\sticky\add_post_type( $post_type_s );
+		return \wpinc\sys\sticky\add_post_type( $post_type_s, $meta_key );
 	}
 }
 

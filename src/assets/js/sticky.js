@@ -2,15 +2,15 @@
  * Sticky Plugin
  *
  * @author Takuto Yanagida
- * @version 2022-02-27
+ * @version 2022-06-08
  */
 
-(() => {
+ (() => {
 	const {
 		data      : { useSelect },
 		coreData  : { useEntityProp },
 		plugins   : { registerPlugin },
-		element   : { createElement: el },
+		element   : { createElement: el, Fragment },
 		components: { CheckboxControl },
 		editPost  : { PluginPostStatusInfo },
 	} = wp;
@@ -31,9 +31,18 @@
 	};
 
 	const render = () => el(
-		PluginPostStatusInfo,
+		Fragment,
 		{},
-		_.zip(meta_keys, labels).map(([meta_key, label]) => el(MetaField, { meta_key, label }))
+		_.zip(meta_keys, labels).map(
+			([meta_key, label]) => el(
+				PluginPostStatusInfo,
+				{},
+				el (
+					MetaField,
+					{ meta_key, label }
+				)
+			)
+		)
 	);
 
 	registerPlugin('wpinc-sticky', { render });

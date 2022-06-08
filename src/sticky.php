@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-05-24
+ * @version 2022-06-08
  */
 
 namespace wpinc\sys\sticky;
@@ -49,13 +49,16 @@ function initialize( array $args = array() ): void {
 	);
 
 	_get_instance()->settings[ $args['meta_key'] ] = $args;  // phpcs:ignore
+	if ( ! empty( $args['post_type'] ) ) {
+		add_post_type( $args['post_type'], $args['meta_key'] );
+	}
 }
 
 /**
  * Makes custom post type sticky.
  *
  * @param string|string[] $post_type_s Post types.
- * @param string          $meta_key    post meta key used for sticky.
+ * @param string          $meta_key    Post meta key used for sticky.
  */
 function add_post_type( $post_type_s, string $meta_key = PMK_STICKY ) {
 	$inst = _get_instance();
@@ -70,19 +73,7 @@ function add_post_type( $post_type_s, string $meta_key = PMK_STICKY ) {
 	}
 
 	foreach ( $pts as $pt ) {
-		register_post_meta(
-			$pt,
-			$meta_key,
-			array(
-				'type'          => 'boolean',
-				'default'       => false,
-				'single'        => true,
-				'show_in_rest'  => true,
-				'auth_callback' => function() {
-					return current_user_can( 'edit_posts' );
-				},
-			)
-		);
+		register( $pt, $meta_key );
 	}
 	static $initialized = false;
 	if ( ! $initialized ) {
@@ -90,7 +81,38 @@ function add_post_type( $post_type_s, string $meta_key = PMK_STICKY ) {
 		$initialized = true;
 	}
 	array_push( $setting['post_type'], ...$pts );
+	$setting['post_type'] = array_values( array_unique( $setting['post_type'] ) );
+
 	$inst->settings[ $meta_key ] = $setting;
+}
+
+/**
+ * Register a pair of post type and post meta key.
+ *
+ * @param string $post_type Post type.
+ * @param string $meta_key  Post meta key.
+ */
+function register( string $post_type, string $meta_key ): void {
+	$inst = _get_instance();
+	$pair = "$post_type:$meta_key";
+	if ( isset( $inst->pt_pmk[ $pair ] ) ) {
+		return;
+	}
+	$inst->pt_pmk[ $pair ] = true;
+
+	register_post_meta(
+		$post_type,
+		$meta_key,
+		array(
+			'type'          => 'boolean',
+			'default'       => false,
+			'single'        => true,
+			'show_in_rest'  => true,
+			'auth_callback' => function() {
+				return current_user_can( 'edit_posts' );
+			},
+		)
+	);
 }
 
 /**
@@ -309,6 +331,13 @@ function _get_instance(): object {
 		 * @var array
 		 */
 		public $settings = array();
+
+		/**
+		 * Pairs of post type and post meta key.
+		 *
+		 * @var array
+		 */
+		public $pt_pmk = array();
 	};
 	return $values;
 }
