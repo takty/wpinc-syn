@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-05-25
+ * @version 2022-07-01
  */
 
 namespace wpinc\sys;
@@ -24,6 +24,7 @@ function activate_simple_default_slug( $post_type_s = array() ) {
 		function ( $slug, $post_ID, $post_status, $post_type ) use ( $pts ) {
 			$post = get_post( $post_ID );
 			if (
+				$post &&
 				( '0000-00-00 00:00:00' === $post->post_date_gmt ) &&
 				( empty( $pts ) || in_array( $post_type, $pts, true ) ) &&
 				( preg_match( '/%/u', $slug ) )
