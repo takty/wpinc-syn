@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-01
+ * @version 2022-10-03
  */
 
 namespace wpinc\sys\option_page;
@@ -64,6 +64,10 @@ function activate( array $args ): void {
 
 	add_action( 'admin_menu', '\wpinc\sys\option_page\_cb_admin_menu' );
 	add_action( 'admin_init', '\wpinc\sys\option_page\_cb_admin_init' );
+
+	if ( $inst->as_menu_page ) {
+		add_filter( "option_page_capability_{$inst->slug}", '\wpinc\sys\option_page\_cb_option_page_capability' );
+	}
 }
 
 /**
@@ -144,6 +148,17 @@ function _cb_admin_init(): void {
 			);
 		}
 	}
+}
+
+/**
+ * Callback function for 'option_page_capability_{$option_page}' filter.
+ *
+ * @param string $capability The capability used for the page, which is manage_options by default.
+ * @return string
+ */
+function _cb_option_page_capability( string $capability ): string {
+	$inst = _get_instance();
+	return $inst->as_menu_page ? 'edit_pages' : $capability;
 }
 
 /**
