@@ -4,10 +4,12 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-08
+ * @version 2022-10-11
  */
 
 namespace wpinc\sys\template_admin;
+
+require_once __DIR__ . '/assets/admin-current-post.php';
 
 /**
  * Activates template admin.
@@ -35,7 +37,7 @@ function activate( string $function_name = 'setup_template_admin' ): void {
  * @param string $function_name Function name.
  */
 function _cb_admin_menu__template_admin( array $post_fixes, string $function_name ): void {
-	$post_id = _get_post_id();
+	$post_id = \wpinc\get_admin_post_id();
 
 	$pt = get_post_meta( $post_id, '_wp_page_template', true );
 	if ( ! empty( $pt ) && 'default' !== $pt ) {
@@ -52,7 +54,7 @@ function _cb_admin_menu__template_admin( array $post_fixes, string $function_nam
 			}
 		}
 	}
-	$post_type = _get_post_type_in_admin( $post_id );
+	$post_type = \wpinc\get_admin_post_type();
 	if ( ! empty( $post_type ) ) {
 		foreach ( $post_fixes as $post_fix ) {
 			if ( _load_page_template_admin( $post_id, $post_type . '.php', $post_fix, $function_name ) ) {
@@ -90,43 +92,6 @@ function _load_page_template_admin( int $post_id, string $path, string $post_fix
 
 // -----------------------------------------------------------------------------
 
-
-/**
- * Gets the post ID.
- *
- * @access private
- *
- * @return int Post ID.
- */
-function _get_post_id(): int {
-	$g_id = $_GET['post'] ?? '';  // phpcs:ignore
-	$p_id = $_POST['post_ID'] ?? '';  // phpcs:ignore
-
-	if ( ! empty( $g_id ) ) {
-		$post_id = (int) $g_id;
-	} elseif ( ! empty( $p_id ) ) {
-		$post_id = (int) $p_id;
-	} else {
-		$post_id = 0;
-	}
-	return $post_id;
-}
-
-/**
- * Gets the post type in admin.
- *
- * @access private
- *
- * @param int $post_id Post ID.
- * @return string Post type.
- */
-function _get_post_type_in_admin( int $post_id ): string {
-	$p = get_post( $post_id );
-	if ( $p ) {
-		return $p->post_type;
-	}
-	return sanitize_key( $_GET['post_type'] ?? '' );  // phpcs:ignore
-}
 
 /**
  * Check whether the post ID is the front page.
