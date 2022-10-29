@@ -4,13 +4,13 @@
  *
  * @package Sample
  * @author Takuto Yanagida
- * @version 2022-06-08
+ * @version 2022-10-30
  */
 
 namespace sample {
+	require_once __DIR__ . '/sys/assets/url.php';
 	require_once __DIR__ . '/sys/custom.php';
 	require_once __DIR__ . '/sys/edit-link.php';
-	require_once __DIR__ . '/sys/utility.php';
 	require_once __DIR__ . '/sys/class-widget-text-banner.php';
 
 	/**
@@ -144,18 +144,32 @@ namespace sample {
 		 * @return string Current URL.
 		 */
 		function get_current_url(): string {
-			return \wpinc\sys\get_current_url();
+			return \wpinc\get_current_url();
 		}
 	}
 
-	/**
-	 * Serializes URL components.
-	 *
-	 * @param array $cs URL components.
-	 * @return string URL.
-	 */
-	function serialize_url( array $cs ): string {
-		return \wpinc\sys\serialize_url( $cs );
+	if ( ! function_exists( '\sample\get_request_url' ) ) {
+		/**
+		 * Gets request URL.
+		 *
+		 * @param bool $orig Whether to get the original URL.
+		 * @return string URL.
+		 */
+		function get_request_url( bool $orig = false ): string {
+			return \wpinc\get_request_url( $orig );
+		}
+	}
+
+	if ( ! function_exists( '\sample\serialize_url' ) ) {
+		/**
+		 * Serializes URL components.
+		 *
+		 * @param array $cs URL components.
+		 * @return string URL.
+		 */
+		function serialize_url( array $cs ): string {
+			return \wpinc\serialize_url( $cs );
+		}
 	}
 }
 
