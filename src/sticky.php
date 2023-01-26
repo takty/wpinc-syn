@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-06-08
+ * @version 2023-01-26
  */
 
 namespace wpinc\sys\sticky;
@@ -39,7 +39,7 @@ function disable_embedded_sticky(): void {
  *
  * @param array $args Arguments.
  */
-function initialize( array $args = array() ): void {
+function initialize( array $args = array() ) {
 	$args += array(
 		'meta_key'   => '_sticky',  // phpcs:ignore
 		'post_type'  => array(),
@@ -48,7 +48,12 @@ function initialize( array $args = array() ): void {
 		'post_state' => _x( 'Sticky', 'post status' ),
 	);
 
-	_get_instance()->settings[ $args['meta_key'] ] = $args;  // phpcs:ignore
+	$inst = _get_instance();
+	if ( isset( $inst->settings[ $args['meta_key'] ] ) ) {
+		return new \WP_Error( 'registered_meta_key', __( 'The meta key has already been registered.' ) );
+	}
+
+	$inst->settings[ $args['meta_key'] ] = $args;  // phpcs:ignore
 	if ( ! empty( $args['post_type'] ) ) {
 		add_post_type( $args['post_type'], $args['meta_key'] );
 	}
