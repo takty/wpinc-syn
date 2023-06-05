@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-06-03
+ * @version 2023-06-05
  */
 
 namespace wpinc\sys\template_admin;
@@ -71,7 +71,7 @@ function _cb_admin_menu__template_admin( array $suffixes, string $function_name 
  *
  * @param int    $post_id       The post ID.
  * @param string $path          The path to the page template admin.
- * @param string $suffix        Postfix of the file name.
+ * @param string $suffix        Suffix of the file name.
  * @param string $function_name Function name for admin.
  */
 function _load_page_template_admin( int $post_id, string $path, string $suffix, string $function_name ) {
