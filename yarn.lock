@@ -1961,10 +1961,10 @@ get-value@^2.0.3, get-value@^2.0.6:
   resolved "https://registry.npmjs.org/get-value/-/get-value-2.0.6.tgz"
   integrity sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==
 
-gettext-parser@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.npmjs.org/gettext-parser/-/gettext-parser-7.0.0.tgz"
-  integrity sha512-2qe7gV9INSUIsBYBlThkyS/z2AzE2PzCTIqJzVhDOm5Ofm5EEglAnVy9vFglfOijl3ABCngG8ZFYg5XHtRbNiQ==
+gettext-parser@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/gettext-parser/-/gettext-parser-7.0.1.tgz#1d0308b6d7b0ac2250cafddb988d03ce170c2a3b"
+  integrity sha512-LU+ieGH3L9HmKEArTlX816/iiAlyA0fx/n/QSeQpkAaH/+jxMk/5UtDkAzcVvW+KlY25/U+IE6dnfkJ8ynt8pQ==
   dependencies:
     content-type "^1.0.5"
     encoding "^0.1.13"
