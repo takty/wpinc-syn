@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-27
+ * @version 2023-06-22
  */
 
 namespace wpinc\sys\ip_restriction;
@@ -141,7 +141,7 @@ function _initialize_hooks(): void {
 function _in_cidr( string $ip, string $cidr ): bool {
 	list( $network, $mask_bit_len ) = explode( '/', $cidr );
 
-	$host   = 32 - $mask_bit_len;
+	$host   = 32 - (int) $mask_bit_len;
 	$net    = ip2long( $network ) >> $host << $host;
 	$ip_net = ip2long( $ip ) >> $host << $host;
 	return $net === $ip_net;

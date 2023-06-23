@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-08-16
+ * @version 2023-06-22
  */
 
 /*  // phpcs:disable
@@ -114,7 +114,10 @@ function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
 
 	$formats = array();
 	if ( isset( $mce_init['style_formats'] ) ) {
-		$formats = json_decode( $mce_init['style_formats'] );
+		$f = json_decode( $mce_init['style_formats'] );
+		if ( is_array( $f ) ) {
+			$formats = $f;
+		}
 	}
 	$formats += array(
 		array(
