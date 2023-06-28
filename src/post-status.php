@@ -67,7 +67,7 @@ function add_post_type( $post_type_s, string $meta_key ) {
 	}
 
 	foreach ( $pts as $pt ) {
-		register( $pt, $meta_key );
+		_register( $pt, $meta_key );
 	}
 	static $initialized = false;
 	if ( ! $initialized ) {
@@ -83,10 +83,12 @@ function add_post_type( $post_type_s, string $meta_key ) {
 /**
  * Register a pair of post type and post meta key.
  *
+ * @access private
+ *
  * @param string $post_type Post type.
  * @param string $meta_key  Post meta key.
  */
-function register( string $post_type, string $meta_key ): void {
+function _register( string $post_type, string $meta_key ): void {
 	$inst = _get_instance();
 	$pair = "$post_type:$meta_key";
 	if ( isset( $inst->pt_pmk[ $pair ] ) ) {
