@@ -1,13 +1,16 @@
 # Translation of Sys - Development in Japanese
 # @package Wpinc Sys
 # @author Takuto Yanagida
-# @version 2022-02-15
+# @version 2023-06-28
 
 # IP Restriction ---------------------------------------------------------------
 
 msgctxt "ip restriction"
 msgid "IP Restriction"
 msgstr "IP制限"
+msgctxt "ip restriction"
+msgid "Restrict display of this post by IP"
+msgstr "この投稿の表示をIPで制限"
 
 # Sticky -----------------------------------------------------------------------
 
