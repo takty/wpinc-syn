@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-06-28
+ * @version 2023-08-29
  */
 
 namespace wpinc\sys\post_status;
@@ -74,7 +74,9 @@ function add_post_type( $post_type_s, string $meta_key ) {
 		_initialize_hooks();
 		$initialized = true;
 	}
-	array_push( $s['post_type'], ...$pts );
+	if ( ! empty( $pts ) ) {
+		array_push( $s['post_type'], ...$pts );
+	}
 	$s['post_type'] = array_values( array_unique( $s['post_type'] ) );
 
 	$inst->settings[ $meta_key ] = $s;
@@ -177,12 +179,12 @@ function _extract_post_type_specific_setting( string $post_type ): array {
  */
 function _cb_post_class( array $classes, array $class, int $post_id ): array {
 	$inst = _get_instance();
-	foreach ( $inst->settings as $key => $s ) {
+	foreach ( $inst->settings as $meta_key => $s ) {
 		if ( empty( $s['post_class'] ) ) {
 			continue;
 		}
 		if ( in_array( get_post_type( $post_id ), $s['post_type'], true ) ) {
-			$val = get_post_meta( $post_id, $s['meta_key'], true );
+			$val = get_post_meta( $post_id, $meta_key, true );
 			if ( $val ) {
 				$classes[] = $s['post_class'];
 			}
@@ -202,14 +204,14 @@ function _cb_post_class( array $classes, array $class, int $post_id ): array {
  */
 function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
 	$inst = _get_instance();
-	foreach ( $inst->settings as $key => $s ) {
+	foreach ( $inst->settings as $meta_key => $s ) {
 		if ( empty( $s['post_state'] ) ) {
 			continue;
 		}
-		if ( in_array( get_post_type( $post ), $s['post_type'], true ) ) {
-			$val = get_post_meta( $post->ID, $s['meta_key'], true );
+		if ( in_array( get_post_type( $post->ID ), $s['post_type'], true ) ) {
+			$val = get_post_meta( $post->ID, $meta_key, true );
 			if ( $val ) {
-				$post_states[ $s['meta_key'] ] = $s['post_state'];  // phpcs:ignore
+				$post_states[ $meta_key ] = $s['post_state'];  // phpcs:ignore
 			}
 		}
 	}

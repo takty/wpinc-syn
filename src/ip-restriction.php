@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-06-28
+ * @version 2023-08-29
  */
 
 namespace wpinc\sys\ip_restriction;
@@ -42,7 +42,9 @@ function add_post_type( $post_type_s ): void {
 		add_filter( 'body_class', '\wpinc\sys\ip_restriction\_cb_body_class' );
 	}
 	$pts = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
-	array_push( $inst->post_types, ...$pts );
+	if ( ! empty( $pts ) ) {
+		array_push( $inst->post_types, ...$pts );
+	}
 }
 
 
@@ -183,7 +185,9 @@ function _cb_pre_get_posts( \WP_Query $query ): void {
 function _cb_body_class( array $classes ) {
 	$inst = _get_instance();
 	if ( is_allowed() ) {
-		array_push( $classes, ...$inst->current_body_classes );
+		foreach ( $inst->current_body_classes as $cls ) {
+			$classes[] = $cls;
+		}
 	}
 	return $classes;
 }
