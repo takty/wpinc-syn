@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-01-30
+ * @version 2023-08-31
  */
 
 namespace wpinc\sys\ajax;
@@ -12,7 +12,7 @@ namespace wpinc\sys\ajax;
 /**
  * Activate AJAX.
  *
- * @param array $args {
+ * @param array<string, mixed> $args {
  *     Arguments.
  *
  *     @type string 'action'
@@ -55,8 +55,8 @@ function activate( array $args ): void {
 /**
  * Gets AJAX URL.
  *
- * @param array $args  Arguments.
- * @param array $query (Optional) Query arguments.
+ * @param array<string, mixed> $args  Arguments.
+ * @param array<string, mixed> $query (Optional) Query arguments.
  * @return string AJAX URL.
  */
 function get_url( array $args, array $query = array() ): string {
@@ -73,7 +73,7 @@ function get_url( array $args, array $query = array() ): string {
 /**
  * Callback function for 'wp_ajax_{$action}' and 'wp_ajax_nopriv_{$action}' actions.
  *
- * @param array $args Arguments.
+ * @param array<string, mixed> $args Arguments.
  */
 function _cb_wp_ajax__( array $args ): void {
 	check_ajax_referer( $args['nonce'], 'nonce' );

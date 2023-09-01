@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-10-03
+ * @version 2023-08-31
  */
 
 namespace wpinc\sys\option_page;
@@ -12,7 +12,7 @@ namespace wpinc\sys\option_page;
 /**
  * Activates custom option page.
  *
- * @param array $args {
+ * @param array<string, mixed> $args {
  *     Arguments.
  *
  *     @type string 'page_title'   The text to be displayed in the title tags of the page when the menu is selected.
@@ -135,7 +135,7 @@ function _cb_admin_init(): void {
 		)
 	);
 	foreach ( $inst->sections as $sid => $cont ) {
-		add_settings_section( $sid, $cont['label'], null, $inst->slug );
+		add_settings_section( $sid, $cont['label'], '__return_false', $inst->slug );
 
 		foreach ( $cont['fields'] as $key => $params ) {
 			add_settings_field(
@@ -166,8 +166,8 @@ function _cb_option_page_capability( string $capability ): string {
  *
  * @access private
  *
- * @param array $input Input data.
- * @return array Sanitized data.
+ * @param array<string, mixed> $input Input data.
+ * @return array<string, mixed> Sanitized data.
  */
 function _cb_sanitize( array $input ): array {
 	$inst = _get_instance();
@@ -175,6 +175,7 @@ function _cb_sanitize( array $input ): array {
 
 	foreach ( $inst->sections as $sid => $cont ) {
 		foreach ( $cont['fields'] as $key => $params ) {
+			$key = (string) $key;
 			if ( ! isset( $input[ $key ] ) ) {
 				continue;
 			}
@@ -194,8 +195,9 @@ function _cb_sanitize( array $input ): array {
  *
  * @access private
  *
- * @param array $args {
+ * @param array<mixed> $args {
  *     Arguments.
+ *
  *     @type string 'key'    Sub key of the option.
  *     @type array  'params' Parameters of the field.
  *     @type array  'vals'   Array of values.
@@ -352,7 +354,7 @@ function _get_instance(): object {
 		/**
 		 * Sections of the option page.
 		 *
-		 * @var array
+		 * @var array<string, array<string, mixed>>
 		 */
 		public $sections;
 	};

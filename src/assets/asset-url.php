@@ -4,7 +4,7 @@
  *
  * @package Wpinc
  * @author Takuto Yanagida
- * @version 2022-02-04
+ * @version 2023-09-01
  */
 
 namespace wpinc;
@@ -63,13 +63,19 @@ if ( ! function_exists( '\wpinc\abs_url' ) ) {
 		$port   = isset( $pu['port'] )   ? ':' . $pu['port']     : '';
 		$path   = isset( $pu['path'] )   ? $pu['path']           : '';
 		// phpcs:enable
-		$path = preg_replace( '#/[^/]*$#', '', $path );
+		$path = preg_replace( '#/[^/]*$#', '', $path ) ?? $path;
 		if ( '/' === $rel[0] ) {
 			$path = '';
 		}
 		$abs = "$host$port$path/$rel";
 		$re  = array( '#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#' );
-		for ( $n = 1; $n > 0; $abs = preg_replace( $re, '/', $abs, -1, $n ) ) {}  // phpcs:ignore
+		for ( $n = 1; $n > 0; ) {
+			$res = preg_replace( $re, '/', $abs, -1, $n );
+			if ( null === $res ) {
+				break;
+			}
+			$abs = $res;
+		}
 		return $scheme . $abs;
 	}
 }

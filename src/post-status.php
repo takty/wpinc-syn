@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-08-29
+ * @version 2023-09-01
  */
 
 namespace wpinc\sys\post_status;
@@ -12,7 +12,8 @@ namespace wpinc\sys\post_status;
 /**
  * Initialize custom post status.
  *
- * @param array $args Arguments.
+ * @param array<string, mixed> $args Arguments.
+ * @return true|\WP_Error Error if an error occurred.
  */
 function initialize( array $args = array() ) {
 	$args += array(
@@ -38,6 +39,7 @@ function initialize( array $args = array() ) {
 	if ( ! empty( $args['post_type'] ) ) {
 		add_post_type( $args['post_type'], $args['meta_key'] );
 	}
+	return true;
 }
 
 /**
@@ -56,10 +58,11 @@ function is_initialized( string $meta_key ): bool {
  *
  * @param string|string[] $post_type_s Post types.
  * @param string          $meta_key    Post meta key.
+ * @return true|\WP_Error Error if an error occurred.
  */
 function add_post_type( $post_type_s, string $meta_key ) {
 	$inst = _get_instance();
-	$pts  = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
+	$pts  = (array) $post_type_s;
 
 	$s = $inst->settings[ $meta_key ] ?? null;
 	if ( null === $s ) {
@@ -80,6 +83,7 @@ function add_post_type( $post_type_s, string $meta_key ) {
 	$s['post_type'] = array_values( array_unique( $s['post_type'] ) );
 
 	$inst->settings[ $meta_key ] = $s;
+	return true;
 }
 
 /**
@@ -133,7 +137,8 @@ function _initialize_hooks(): void {
 			function () {
 				global $pagenow;
 				if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
-					if ( get_current_screen()->is_block_editor() ) {
+					$cs = get_current_screen();
+					if ( $cs && $cs->is_block_editor() ) {
 						add_action( 'enqueue_block_editor_assets', '\wpinc\sys\post_status\_cb_enqueue_block_editor_assets' );
 					} else {
 						add_action( 'post_submitbox_misc_actions', '\wpinc\sys\post_status\_cb_post_submitbox_misc_actions' );
@@ -151,7 +156,7 @@ function _initialize_hooks(): void {
  * @access private
  *
  * @param string $post_type Post type.
- * @return array Setting.
+ * @return array<string, mixed> Setting.
  */
 function _extract_post_type_specific_setting( string $post_type ): array {
 	$inst = _get_instance();
@@ -175,7 +180,7 @@ function _extract_post_type_specific_setting( string $post_type ): array {
  * @param string[] $classes An array of post class names.
  * @param string[] $class   An array of additional class names added to the post.
  * @param int      $post_id The post ID.
- * @return array Classes.
+ * @return string[] Classes.
  */
 function _cb_post_class( array $classes, array $class, int $post_id ): array {
 	$inst = _get_instance();
@@ -229,7 +234,8 @@ function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
  */
 function _cb_enqueue_block_editor_assets(): void {
 	$inst = _get_instance();
-	$ss   = _extract_post_type_specific_setting( get_current_screen()->id );
+	$cs   = get_current_screen();
+	$ss   = $cs ? _extract_post_type_specific_setting( $cs->id ) : array();
 	if ( empty( $ss ) ) {
 		return;
 	}
@@ -238,7 +244,7 @@ function _cb_enqueue_block_editor_assets(): void {
 		'wpinc-post-status',
 		\wpinc\abs_url( $url_to, './assets/js/post-status.min.js' ),
 		array( 'wp-element', 'wp-i18n', 'wp-data', 'wp-components', 'wp-edit-post', 'wp-plugins' ),
-		filemtime( __DIR__ . '/assets/js/post-status.min.js' ),
+		(string) filemtime( __DIR__ . '/assets/js/post-status.min.js' ),
 		true
 	);
 	wp_localize_script(
@@ -270,7 +276,7 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
 	}
 	wp_nonce_field( '_wpinc_post_status', '_wpinc_post_status_nonce' );
 	foreach ( $ss as $s ) {
-		$val = get_post_meta( get_the_ID(), $s['meta_key'], true );
+		$val = get_post_meta( $post->ID, $s['meta_key'], true );
 		?>
 		<div class="misc-pub-section">
 			<label style="margin-left:18px;">
@@ -332,14 +338,14 @@ function _get_instance(): object {
 		/**
 		 * Settings.
 		 *
-		 * @var array
+		 * @var array<string, array<string, mixed>>
 		 */
 		public $settings = array();
 
 		/**
 		 * Pairs of post type and post meta key.
 		 *
-		 * @var array
+		 * @var array<string, string>
 		 */
 		public $pt_pmk = array();
 	};

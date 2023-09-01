@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-08-29
+ * @version 2023-09-01
  */
 
 namespace wpinc\sys\ip_restriction;
@@ -16,7 +16,7 @@ const PMK_IP_RESTRICTION = '_ip_restriction';
 /**
  * Initialize IP restriction.
  */
-function initialize() {
+function initialize(): void {
 	$args = array(
 		'meta_key'   => PMK_IP_RESTRICTION,  // phpcs:ignore
 		'label'      => _x( 'Restrict display of this post by IP', 'ip restriction', 'wpinc_sys' ),
@@ -41,7 +41,7 @@ function add_post_type( $post_type_s ): void {
 		add_action( 'pre_get_posts', '\wpinc\sys\ip_restriction\_cb_pre_get_posts' );
 		add_filter( 'body_class', '\wpinc\sys\ip_restriction\_cb_body_class' );
 	}
-	$pts = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
+	$pts = (array) $post_type_s;
 	if ( ! empty( $pts ) ) {
 		array_push( $inst->post_types, ...$pts );
 	}
@@ -181,8 +181,9 @@ function _cb_pre_get_posts( \WP_Query $query ): void {
  * @access private
  *
  * @param string[] $classes Classes.
+ * @return string[] Classes.
  */
-function _cb_body_class( array $classes ) {
+function _cb_body_class( array $classes ): array {
 	$inst = _get_instance();
 	if ( is_allowed() ) {
 		foreach ( $inst->current_body_classes as $cls ) {
@@ -212,21 +213,21 @@ function _get_instance(): object {
 		/**
 		 * White list of allowed IPs.
 		 *
-		 * @var array
+		 * @var array<array{string, string}>
 		 */
 		public $whites = array();
 
 		/**
 		 * The target post types.
 		 *
-		 * @var array
+		 * @var string[]
 		 */
 		public $post_types = array();
 
 		/**
 		 * CSS classes to be added.
 		 *
-		 * @var array
+		 * @var string[]
 		 */
 		public $current_body_classes = array();
 

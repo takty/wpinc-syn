@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-06-28
+ * @version 2023-08-31
  */
 
 namespace wpinc\sys\sticky;
@@ -39,9 +39,9 @@ function disable_embedded_sticky(): void {
 /**
  * Initialize custom sticky.
  *
- * @param array $deprecated Deprecated.
+ * @param array<string, mixed> $deprecated Deprecated.
  */
-function initialize( array $deprecated = array() ) {
+function initialize( array $deprecated = array() ): void {
 	if ( ! empty( $deprecated ) && WP_DEBUG ) {
 		trigger_error( 'Use function \'\\wpinc\\sys\\post_status\\initialize\' instead.', E_USER_DEPRECATED );  // phpcs:ignore
 	}
@@ -60,7 +60,7 @@ function initialize( array $deprecated = array() ) {
  * @param string|string[] $post_type_s Post types.
  * @param string          $meta_key    Post meta key used for sticky.
  */
-function add_post_type( $post_type_s, string $meta_key = PMK_STICKY ) {
+function add_post_type( $post_type_s, string $meta_key = PMK_STICKY ): void {
 	if ( PMK_STICKY !== $meta_key && WP_DEBUG ) {
 		trigger_error( 'Use function \'\\wpinc\\sys\\post_status\\add_post_type\' instead.', E_USER_DEPRECATED );  // phpcs:ignore
 	}

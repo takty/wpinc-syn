@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2023-08-31
  */
 
 /*  // phpcs:disable
@@ -71,7 +71,7 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
 /**
  * Adds style formats.
  *
- * @param array $args {
+ * @param array<string, mixed> $args {
  *     Arguments.
  *
  *     @type array 'labels'  Labels of styles.
@@ -97,9 +97,9 @@ function add_style_formats( array $args = array() ): void {
 /**
  * Callback function for 'tiny_mce_before_init' filter.
  *
- * @param array $mce_init Settings.
- * @param array $args     Arguments.
- * @return array Settings.
+ * @param array<string, mixed> $mce_init Settings.
+ * @param array<string, mixed> $args     Arguments.
+ * @return array<string, mixed> Settings.
  */
 function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
 	$ls  = $args['labels'] ?? array();
@@ -287,7 +287,8 @@ function _cb_current_screen( callable $fn, bool $only_classic ): void {
 	global $pagenow;
 	if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
 		if ( $only_classic ) {
-			if ( ! get_current_screen()->is_block_editor() ) {
+			$cs = get_current_screen();
+			if ( $cs && ! $cs->is_block_editor() ) {
 				$fn();
 			}
 		} else {

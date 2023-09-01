@@ -4,7 +4,7 @@
  *
  * @package Wpinc
  * @author Takuto Yanagida
- * @version 2022-10-10
+ * @version 2023-09-01
  */
 
 namespace wpinc;
@@ -20,7 +20,7 @@ if ( ! function_exists( '\wpinc\get_admin_post_id' ) ) {
 		$id_p = $_POST['post_ID'] ?? null;  // phpcs:ignore
 
 		if ( $id_g || $id_p ) {
-			return intval( $id_g ? $id_g : $id_p );
+			return (int) ( $id_g ? $id_g : $id_p );
 		}
 		return 0;
 	}

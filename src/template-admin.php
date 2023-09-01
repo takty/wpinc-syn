@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-06-05
+ * @version 2023-09-01
  */
 
 namespace wpinc\sys\template_admin;
@@ -33,8 +33,8 @@ function activate( string $function_name = 'setup_template_admin' ): void {
 /**
  * Callback function for 'admin_menu' action.
  *
- * @param array  $suffixes      Post-fixes of file names of template admin files.
- * @param string $function_name Function name.
+ * @param string[] $suffixes      Suffixes of file names of template admin files.
+ * @param string   $function_name Function name.
  */
 function _cb_admin_menu__template_admin( array $suffixes, string $function_name ): void {
 	$post_id = \wpinc\get_admin_post_id();
@@ -73,8 +73,9 @@ function _cb_admin_menu__template_admin( array $suffixes, string $function_name 
  * @param string $path          The path to the page template admin.
  * @param string $suffix        Suffix of the file name.
  * @param string $function_name Function name for admin.
+ * @return bool True if successful.
  */
-function _load_page_template_admin( int $post_id, string $path, string $suffix, string $function_name ) {
+function _load_page_template_admin( int $post_id, string $path, string $suffix, string $function_name ): bool {
 	$path = str_replace( '.php', $suffix, $path );
 	$path = get_parent_theme_file_path( $path );
 

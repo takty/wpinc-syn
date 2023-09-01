@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-07-01
+ * @version 2023-09-01
  */
 
 namespace wpinc\sys;
@@ -14,24 +14,24 @@ namespace wpinc\sys;
  *
  * @param string|string[] $post_type_s Post types. Default array() (all post types).
  */
-function activate_simple_default_slug( $post_type_s = array() ) {
+function activate_simple_default_slug( $post_type_s = array() ): void {
 	if ( ! is_admin() ) {
 		return;
 	}
-	$pts = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
+	$pts = (array) $post_type_s;
 	add_filter(
 		'wp_unique_post_slug',
-		function ( $slug, $post_ID, $post_status, $post_type ) use ( $pts ) {
-			$post = get_post( $post_ID );
+		function ( $slug, $post_id, $post_status, $post_type ) use ( $pts ) {
+			$post = get_post( $post_id );
 			if (
 				$post &&
 				( '0000-00-00 00:00:00' === $post->post_date_gmt ) &&
 				( empty( $pts ) || in_array( $post_type, $pts, true ) ) &&
 				( preg_match( '/%/u', $slug ) )
 			) {
-				$slug = preg_replace( '/[^a-zA-Z0-9_-]/u', '_', urldecode( $slug ) );
+				$slug = (string) preg_replace( '/[^a-zA-Z0-9_-]/u', '_', urldecode( $slug ) );
 				if ( 0 === strlen( $slug ) || ! preg_match( '/[^_]/u', $slug ) ) {
-					$slug = $post_ID;
+					$slug = $post_id;
 				}
 			}
 			return $slug;
@@ -44,7 +44,7 @@ function activate_simple_default_slug( $post_type_s = array() ) {
 /**
  * Activates 'enter title here' label.
  */
-function activate_enter_title_here_label() {
+function activate_enter_title_here_label(): void {
 	if ( ! is_admin() ) {
 		return;
 	}
@@ -82,14 +82,15 @@ function activate_password_form_template(): void {
  * @access private
  *
  * @param string $output The password form HTML output.
+ * @return string The password form.
  */
-function _cb_the_password_form( $output ) {
+function _cb_the_password_form( string $output ): string {
 	$password_form_template = locate_template( 'passwordform.php' );
 
 	if ( '' !== $password_form_template ) {
 		ob_start();
 		require $password_form_template;
-		$output = str_replace( "\n", '', ob_get_clean() );
+		$output = str_replace( "\n", '', (string) ob_get_clean() );
 	}
 	return $output;
 }
@@ -160,7 +161,7 @@ function remove_document_title_separator(): void {
  */
 function _strip_custom_tags( string $text ): string {
 	// Replace double full-width spaces and br tags to single space.
-	$text = preg_replace( '/　　|<\s*br\s*\/?>/ui', ' ', $text );
+	$text = preg_replace( '/　　|<\s*br\s*\/?>/ui', ' ', $text ) ?? $text;
 	$text = wp_strip_all_tags( $text, true );
 	return $text;
 }
