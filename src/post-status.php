@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-09-01
+ * @version 2023-09-19
  */
 
 namespace wpinc\sys\post_status;
@@ -233,9 +233,8 @@ function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
  * @access private
  */
 function _cb_enqueue_block_editor_assets(): void {
-	$inst = _get_instance();
-	$cs   = get_current_screen();
-	$ss   = $cs ? _extract_post_type_specific_setting( $cs->id ) : array();
+	$cs = get_current_screen();
+	$ss = $cs ? _extract_post_type_specific_setting( $cs->id ) : array();
 	if ( empty( $ss ) ) {
 		return;
 	}
@@ -269,8 +268,7 @@ function _cb_enqueue_block_editor_assets(): void {
  * @param \WP_Post $post WP_Post object for the current post.
  */
 function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
-	$inst = _get_instance();
-	$ss   = _extract_post_type_specific_setting( $post->post_type );
+	$ss = _extract_post_type_specific_setting( $post->post_type );
 	if ( empty( $ss ) ) {
 		return;
 	}
@@ -297,8 +295,7 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
  * @param \WP_Post $post    WP_Post object for the current post.
  */
 function _cb_save_post( int $post_id, \WP_Post $post ): void {
-	$inst = _get_instance();
-	$ss   = _extract_post_type_specific_setting( $post->post_type );
+	$ss = _extract_post_type_specific_setting( $post->post_type );
 	if ( empty( $ss ) ) {
 		return;
 	}
