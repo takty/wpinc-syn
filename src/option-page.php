@@ -4,15 +4,26 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-08-31
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys\option_page;
 
-/**
+/** phpcs:ignore
  * Activates custom option page.
  *
- * @param array<string, mixed> $args {
+ * phpcs:ignore
+ * @param array{
+ *     page_title?  : string,
+ *     menu_title?  : string,
+ *     slug?        : string,
+ *     option_key?  : string,
+ *     as_menu_page?: bool,
+ *     sections?    : array<string, array{ label: string, fields: array<string, array{ type: string, label: string, description: string|null, filter: callable|null }> }>,
+ * } $args Arguments.
+ * $args {
  *     Arguments.
  *
  *     @type string 'page_title'   The text to be displayed in the title tags of the page when the menu is selected.
@@ -38,12 +49,12 @@ function activate( array $args ): void {
 	if ( ! empty( $args['page_title'] ) && empty( $args['menu_title'] ) ) {
 		$args['menu_title'] = $args['page_title'];
 	}
-	foreach ( $args['sections'] as $sid => &$cont ) {
+	foreach ( $args['sections'] as $_sid => &$cont ) {
 		$cont += array(
 			'label'  => '',
 			'fields' => array(),
 		);
-		foreach ( $cont['fields'] as $key => &$params ) {
+		foreach ( $cont['fields'] as $_key => &$params ) {
 			$params += array(
 				'type'        => '',
 				'label'       => '',
@@ -55,15 +66,15 @@ function activate( array $args ): void {
 
 	$inst = _get_instance();
 
-	$inst->page_title   = $args['page_title'];
-	$inst->menu_title   = $args['menu_title'];
-	$inst->slug         = $args['slug'];
-	$inst->option_key   = $args['option_key'];
-	$inst->as_menu_page = $args['as_menu_page'];
-	$inst->sections     = $args['sections'];
+	$inst->page_title   = $args['page_title'];    // @phpstan-ignore-line
+	$inst->menu_title   = $args['menu_title'];    // @phpstan-ignore-line
+	$inst->slug         = $args['slug'];          // @phpstan-ignore-line
+	$inst->option_key   = $args['option_key'];    // @phpstan-ignore-line
+	$inst->as_menu_page = $args['as_menu_page'];  // @phpstan-ignore-line
+	$inst->sections     = $args['sections'];      // @phpstan-ignore-line
 
-	add_action( 'admin_menu', '\wpinc\sys\option_page\_cb_admin_menu' );
-	add_action( 'admin_init', '\wpinc\sys\option_page\_cb_admin_init' );
+	add_action( 'admin_menu', '\wpinc\sys\option_page\_cb_admin_menu', 10, 0 );
+	add_action( 'admin_init', '\wpinc\sys\option_page\_cb_admin_init', 10, 0 );
 
 	if ( $inst->as_menu_page ) {
 		add_filter( "option_page_capability_{$inst->slug}", '\wpinc\sys\option_page\_cb_option_page_capability' );
@@ -173,9 +184,8 @@ function _cb_sanitize( array $input ): array {
 	$inst = _get_instance();
 	$new  = array();
 
-	foreach ( $inst->sections as $sid => $cont ) {
+	foreach ( $inst->sections as $_sid => $cont ) {
 		foreach ( $cont['fields'] as $key => $params ) {
-			$key = (string) $key;
 			if ( ! isset( $input[ $key ] ) ) {
 				continue;
 			}
@@ -190,17 +200,22 @@ function _cb_sanitize( array $input ): array {
 	return $new;
 }
 
-/**
+/** phpcs:ignore
  * Callback function for outputting HTML fields.
  *
  * @access private
- *
- * @param array<mixed> $args {
+ * phpcs:ignore
+ * @param array{
+ *     string,
+ *     array{ type: string, label: string, description: string|null, filter: callable|null },
+ *     array<string, string|null>,
+ * } $args Arguments.
+ * $args {
  *     Arguments.
  *
- *     @type string 'key'    Sub key of the option.
- *     @type array  'params' Parameters of the field.
- *     @type array  'vals'   Array of values.
+ *     @type string 0 Sub key of the option.
+ *     @type array  1 Parameters of the field.
+ *     @type array  2 Array of values.
  * }
  */
 function _cb_output_html_field( array $args ): void {
@@ -286,11 +301,11 @@ function _echo_textarea( ?string $val, string $key, string $name, string $desc =
  * @access private
  *
  * @param string|null $val  Current value.
- * @param string      $key  Sub key of the option.
+ * @param string      $_key Sub key of the option.
  * @param string      $name Name attribute.
  * @param string      $desc (Optional) Description. Default ''.
  */
-function _echo_checkbox( ?string $val, string $key, string $name, string $desc = '' ): void {
+function _echo_checkbox( ?string $val, string $_key, string $name, string $desc = '' ): void {
 	printf(
 		'<label><input type="checkbox" name="%s" value="1"%s> %s</label>',
 		esc_attr( $name ),
@@ -308,7 +323,14 @@ function _echo_checkbox( ?string $val, string $key, string $name, string $desc =
  *
  * @access private
  *
- * @return object Instance.
+ * @return object{
+ *     page_title  : string,
+ *     menu_title  : string,
+ *     slug        : string,
+ *     option_key  : string,
+ *     as_menu_page: bool,
+ *     sections    : array<string, array{ label: string, fields: array<string, array{ type: string, label: string, description: string|null, filter: callable|null }> }>,
+ * } Instance.
  */
 function _get_instance(): object {
 	static $values = null;
@@ -321,42 +343,42 @@ function _get_instance(): object {
 		 *
 		 * @var string
 		 */
-		public $page_title;
+		public $page_title = '';
 
 		/**
 		 * The text to be used for the menu.
 		 *
 		 * @var string
 		 */
-		public $menu_title;
+		public $menu_title = '';
 
 		/**
 		 * The slug name to refer to this menu by.
 		 *
 		 * @var string
 		 */
-		public $slug;
+		public $slug = '';
 
 		/**
 		 * Name of the option to retrieve.
 		 *
 		 * @var string
 		 */
-		public $option_key;
+		public $option_key = '';
 
 		/**
 		 * Whether to add the option as menu page.
 		 *
 		 * @var bool
 		 */
-		public $as_menu_page;
+		public $as_menu_page = false;
 
 		/**
 		 * Sections of the option page.
 		 *
-		 * @var array<string, array<string, mixed>>
+		 * @var array<string, array{ label: string, fields: array<string, array{ type: string, label: string, description: string|null, filter: callable|null }> }>
 		 */
-		public $sections;
+		public $sections = array();
 	};
 	return $values;
 }

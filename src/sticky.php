@@ -4,8 +4,10 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-08-31
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys\sticky;
 
@@ -39,6 +41,8 @@ function disable_embedded_sticky(): void {
 /**
  * Initialize custom sticky.
  *
+ * @psalm-suppress ArgumentTypeCoercion
+ *
  * @param array<string, mixed> $deprecated Deprecated.
  */
 function initialize( array $deprecated = array() ): void {
@@ -51,7 +55,7 @@ function initialize( array $deprecated = array() ): void {
 		'post_state' => _x( 'Sticky', 'post status' ),
 		'post_class' => 'sticky',
 	);
-	\wpinc\sys\post_status\initialize( $args + $deprecated );
+	\wpinc\sys\post_status\initialize( $args + $deprecated );  // @phpstan-ignore-line
 }
 
 /**

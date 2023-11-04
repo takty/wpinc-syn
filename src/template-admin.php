@@ -4,8 +4,10 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-09-01
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys\template_admin;
 
@@ -40,7 +42,7 @@ function _cb_admin_menu__template_admin( array $suffixes, string $function_name 
 	$post_id = \wpinc\get_admin_post_id();
 
 	$pt = get_post_meta( $post_id, '_wp_page_template', true );
-	if ( ! empty( $pt ) && 'default' !== $pt ) {
+	if ( is_string( $pt ) && ! empty( $pt ) && 'default' !== $pt ) {
 		foreach ( $suffixes as $sf ) {
 			if ( _load_page_template_admin( $post_id, $pt, $sf, $function_name ) ) {
 				return;
@@ -104,7 +106,8 @@ function _load_page_template_admin( int $post_id, string $path, string $suffix, 
  */
 function _is_page_on_front( int $post_id ): bool {
 	if ( 'page' === get_option( 'show_on_front' ) ) {
-		if ( (int) get_option( 'page_on_front' ) === $post_id ) {
+		$pof = get_option( 'page_on_front' );
+		if ( is_numeric( $pof ) && (int) $pof === $post_id ) {
 			return true;
 		}
 	}

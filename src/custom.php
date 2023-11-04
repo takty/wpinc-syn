@@ -4,8 +4,10 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-09-01
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys;
 
@@ -21,17 +23,17 @@ function activate_simple_default_slug( $post_type_s = array() ): void {
 	$pts = (array) $post_type_s;
 	add_filter(
 		'wp_unique_post_slug',
-		function ( $slug, $post_id, $post_status, $post_type ) use ( $pts ) {
+		function ( $slug, $post_id, $_post_status, $post_type ) use ( $pts ) {
 			$post = get_post( $post_id );
 			if (
-				$post &&
+				$post instanceof \WP_Post &&
 				( '0000-00-00 00:00:00' === $post->post_date_gmt ) &&
 				( empty( $pts ) || in_array( $post_type, $pts, true ) ) &&
 				( preg_match( '/%/u', $slug ) )
 			) {
 				$slug = (string) preg_replace( '/[^a-zA-Z0-9_-]/u', '_', urldecode( $slug ) );
 				if ( 0 === strlen( $slug ) || ! preg_match( '/[^_]/u', $slug ) ) {
-					$slug = $post_id;
+					$slug = (string) $post_id;
 				}
 			}
 			return $slug;
@@ -80,6 +82,7 @@ function activate_password_form_template(): void {
  * Callback function for 'the_password_form' hook.
  *
  * @access private
+ * @psalm-suppress UnresolvableInclude
  *
  * @param string $output The password form HTML output.
  * @return string The password form.
@@ -108,10 +111,10 @@ function _cb_the_password_form( string $output ): string {
 function remove_post_title_indication( bool $protected, bool $private ): void {
 	if ( ! is_admin() ) {
 		if ( $protected ) {
-			add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format' );
+			add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format', 10, 0 );
 		}
 		if ( $private ) {
-			add_filter( 'private_title_format', '\wpinc\sys\_cb_title_format' );
+			add_filter( 'private_title_format', '\wpinc\sys\_cb_title_format', 10, 0 );
 		}
 	}
 }
@@ -127,6 +130,8 @@ function _cb_title_format(): string {
 
 /**
  * Removes prefixes from archive titles.
+ *
+ * @psalm-suppress InvalidScalarArgument
  */
 function remove_archive_title_prefix(): void {
 	if ( ! is_admin() ) {

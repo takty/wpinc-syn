@@ -4,8 +4,10 @@
  *
  * @package Wpinc
  * @author Takuto Yanagida
- * @version 2023-08-31
+ * @version 2023-11-02
  */
+
+declare(strict_types=1);
 
 namespace wpinc;
 
@@ -35,8 +37,8 @@ if ( ! function_exists( '\wpinc\get_request_url' ) ) {
 	 */
 	function get_request_url( bool $orig = false ): string {
 		// phpcs:disable
-		$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'];  // When reverse proxy exists.
-		$req  = ( $orig && isset( $_SERVER['REQUEST_URI_ORIG'] ) ) ? $_SERVER['REQUEST_URI_ORIG'] : $_SERVER['REQUEST_URI'];
+		$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? '';  // When reverse proxy exists.
+		$req  = ( $orig && isset( $_SERVER['REQUEST_URI_ORIG'] ) ) ? $_SERVER['REQUEST_URI_ORIG'] : $_SERVER['REQUEST_URI'] ?? '';
 		// phpcs:enable
 		return ( is_ssl() ? 'https://' : 'http://' ) . wp_unslash( $host ) . wp_unslash( $req );
 	}

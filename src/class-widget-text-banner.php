@@ -4,13 +4,17 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-09-01
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys;
 
 /**
  * Text banner widget.
+ *
+ * @psalm-suppress UnusedClass
  */
 class Widget_Text_Banner extends \WP_Widget {
 
@@ -74,10 +78,17 @@ class Widget_Text_Banner extends \WP_Widget {
 	 */
 	private static $do_use_opt_color;
 
-	/**
+	/** phpcs:ignore
 	 * Registers widgets.
 	 *
-	 * @param array<string, mixed> $args {
+	 * phpcs:ignore
+	 * @param array{
+	 *     template?             : string,
+	 *     do_use_colo?          : bool,
+	 *     do_use_bg_color?      : bool,
+	 *     do_use_optional_color?: bool,
+	 * } $args Arguments.
+	 * $args {
 	 *     Arguments.
 	 *
 	 *     @type string 'template'              Template HTML of the widget.
@@ -136,13 +147,22 @@ class Widget_Text_Banner extends \WP_Widget {
 	 */
 	public function widget( $args, $instance ): void {
 		global $post;
+		$instance += array(
+			'title'     => '',
+			'link_url'  => '',
+			'color'     => '',
+			'color_bg'  => '',
+			'color_opt' => '',
+		);
 
-		$title     = ! empty( $instance['title'] ) ? $instance['title'] : '';
-		$title     = apply_filters( 'widget_title', $title, $instance, $this->id_base );
-		$link_url  = ! empty( $instance['link_url'] ) ? $instance['link_url'] : '';
-		$color     = ! empty( $instance['color'] ) ? $instance['color'] : '';
-		$color_bg  = ! empty( $instance['color_bg'] ) ? $instance['color_bg'] : '';
-		$color_opt = ! empty( $instance['color_opt'] ) ? $instance['color_opt'] : '';
+		// phpcs:disable
+		$title     = is_string( $instance['title'] )     ? $instance['title']     : '';
+		$link_url  = is_string( $instance['link_url'] )  ? $instance['link_url']  : '';
+		$color     = is_string( $instance['color'] )     ? $instance['color']     : '';
+		$color_bg  = is_string( $instance['color_bg'] )  ? $instance['color_bg']  : '';
+		$color_opt = is_string( $instance['color_opt'] ) ? $instance['color_opt'] : '';
+		// phpcs:enable
+		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 		$_title     = self::separate_line( $title );
 		$_link_url  = esc_attr( $link_url );
@@ -303,5 +323,4 @@ class Widget_Text_Banner extends \WP_Widget {
 		wp_add_inline_script( 'wp-color-picker', $code, 'after' );
 		return '';
 	}
-
 }

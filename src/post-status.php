@@ -4,18 +4,29 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-09-19
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys\post_status;
 
-/**
+require_once __DIR__ . '/assets/asset-url.php';
+
+/** phpcs:ignore
  * Initialize custom post status.
  *
- * @param array<string, mixed> $args Arguments.
+ * phpcs:ignore
+ * @param array{
+ *     meta_key   : string,
+ *     label      : string,
+ *     post_class?: string|null,
+ *     post_state?: string|null,
+ *     post_type? : string[],
+ * } $args Arguments.
  * @return true|\WP_Error Error if an error occurred.
  */
-function initialize( array $args = array() ) {
+function initialize( array $args ) {
 	$args += array(
 		'meta_key'   => '',  // phpcs:ignore
 		'label'      => '',
@@ -34,7 +45,7 @@ function initialize( array $args = array() ) {
 	if ( isset( $inst->settings[ $args['meta_key'] ] ) ) {
 		return new \WP_Error( 'registered_meta_key', __( 'The meta key has already been registered.' ) );
 	}
-
+	// @phpstan-ignore-next-line
 	$inst->settings[ $args['meta_key'] ] = $args;  // phpcs:ignore
 	if ( ! empty( $args['post_type'] ) ) {
 		add_post_type( $args['post_type'], $args['meta_key'] );
@@ -82,7 +93,7 @@ function add_post_type( $post_type_s, string $meta_key ) {
 	}
 	$s['post_type'] = array_values( array_unique( $s['post_type'] ) );
 
-	$inst->settings[ $meta_key ] = $s;
+	$inst->settings[ $meta_key ] = $s;  // @phpstan-ignore-line
 	return true;
 }
 
@@ -100,7 +111,7 @@ function _register( string $post_type, string $meta_key ): void {
 	if ( isset( $inst->pt_pmk[ $pair ] ) ) {
 		return;
 	}
-	$inst->pt_pmk[ $pair ] = true;
+	$inst->pt_pmk[ $pair ] = true;  // @phpstan-ignore-line
 
 	register_post_meta(
 		$post_type,
@@ -110,7 +121,7 @@ function _register( string $post_type, string $meta_key ): void {
 			'default'       => false,
 			'single'        => true,
 			'show_in_rest'  => true,
-			'auth_callback' => function() {
+			'auth_callback' => function () {
 				return current_user_can( 'edit_posts' );
 			},
 		)
@@ -156,13 +167,13 @@ function _initialize_hooks(): void {
  * @access private
  *
  * @param string $post_type Post type.
- * @return array<string, mixed> Setting.
+ * @return array<string, array{ meta_key: string, label: string, post_class: string|null, post_state: string|null, post_type: string[] }> Setting.
  */
 function _extract_post_type_specific_setting( string $post_type ): array {
 	$inst = _get_instance();
 	return array_filter(
 		$inst->settings,
-		function ( $s ) use ( $post_type ) {
+		function ( array $s ) use ( $post_type ) {
 			return in_array( $post_type, $s['post_type'], true );
 		}
 	);
@@ -178,11 +189,11 @@ function _extract_post_type_specific_setting( string $post_type ): array {
  * @access private
  *
  * @param string[] $classes An array of post class names.
- * @param string[] $class   An array of additional class names added to the post.
+ * @param string[] $_cls    An array of additional class names added to the post.
  * @param int      $post_id The post ID.
  * @return string[] Classes.
  */
-function _cb_post_class( array $classes, array $class, int $post_id ): array {
+function _cb_post_class( array $classes, array $_cls, int $post_id ): array {
 	$inst = _get_instance();
 	foreach ( $inst->settings as $meta_key => $s ) {
 		if ( empty( $s['post_class'] ) ) {
@@ -290,6 +301,7 @@ function _cb_post_submitbox_misc_actions( \WP_Post $post ): void {
  * Callback function for 'save_post' action.
  *
  * @access private
+ * @psalm-suppress RedundantCondition
  *
  * @param int      $post_id Post ID.
  * @param \WP_Post $post    WP_Post object for the current post.
@@ -299,9 +311,10 @@ function _cb_save_post( int $post_id, \WP_Post $post ): void {
 	if ( empty( $ss ) ) {
 		return;
 	}
+	$nonce = $_POST['_wpinc_post_status_nonce'] ?? null;  // phpcs:ignore
 	if (
-		! isset( $_POST['_wpinc_post_status_nonce'] ) ||
-		! wp_verify_nonce( sanitize_key( $_POST['_wpinc_post_status_nonce'] ), '_wpinc_post_status' ) ||
+		! is_string( $nonce ) ||
+		! wp_verify_nonce( sanitize_key( $nonce ), '_wpinc_post_status' ) ||
 		defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE
 	) {
 		return;
@@ -324,7 +337,10 @@ function _cb_save_post( int $post_id, \WP_Post $post ): void {
  *
  * @access private
  *
- * @return object Instance.
+ * @return object{
+ *     settings: array<string, array{ meta_key: string, label: string, post_class: string|null, post_state: string|null, post_type: string[] }>,
+ *     pt_pmk  : array<string, string>,
+ * } Instance.
  */
 function _get_instance(): object {
 	static $values = null;
@@ -335,7 +351,7 @@ function _get_instance(): object {
 		/**
 		 * Settings.
 		 *
-		 * @var array<string, array<string, mixed>>
+		 * @var array<string, array{ meta_key: string, label: string, post_class: string|null, post_state: string|null, post_type: string[] }>
 		 */
 		public $settings = array();
 

@@ -4,8 +4,10 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-09-01
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys\ip_restriction;
 
@@ -60,7 +62,7 @@ function add_post_type( $post_type_s ): void {
 function add_allowed_cidr( string $cidr, string $cls = '' ): void {
 	$inst = _get_instance();
 
-	$inst->whites[] = array(
+	$inst->whites[] = array(  // @phpstan-ignore-line
 		'cidr' => $cidr,
 		'cls'  => $cls,
 	);
@@ -78,15 +80,17 @@ function is_allowed(): bool {
 	if ( $checked++ ) {
 		return $inst->is_allowed;
 	}
-	$inst = _get_instance();
-	$ip   = $_SERVER['REMOTE_ADDR'];  // phpcs:ignore
+	$inst->is_allowed = false;  // @phpstan-ignore-line
 
-	$inst->is_allowed = false;
-	foreach ( $inst->whites as $w ) {
-		if ( _in_cidr( $ip, $w['cidr'] ) ) {
-			$inst->is_allowed = true;
-			if ( ! empty( $w['cls'] ) ) {
-				$inst->current_body_classes[] = $w['cls'];
+	if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+		$ip = $_SERVER['REMOTE_ADDR'];  // phpcs:ignore
+
+		foreach ( $inst->whites as $w ) {
+			if ( _in_cidr( $ip, $w['cidr'] ) ) {
+				$inst->is_allowed = true;  // @phpstan-ignore-line
+				if ( ! empty( $w['cls'] ) ) {
+					$inst->current_body_classes[] = $w['cls'];  // @phpstan-ignore-line
+				}
 			}
 		}
 	}
@@ -144,10 +148,22 @@ function _cb_pre_get_posts( \WP_Query $query ): void {
 	$post_type_s = $query->get( 'post_type', array() );
 	$pts         = is_array( $post_type_s ) ? $post_type_s : array( $post_type_s );
 
+	$pts = array_filter(
+		$pts,
+		function ( $e ) {
+			return is_string( $e );
+		}
+	);
+
 	if ( ! empty( $pts ) && empty( array_intersect( $pts, $inst->post_types ) ) ) {
 		return;
 	}
 	$bypass = true;
+	/**
+	 * Post IDs. This is determined by $args['fields'] being 'ids'.
+	 *
+	 * @var int[] $ex_ps
+	 */
 	$ex_ps  = get_posts(
 		array(
 			'post_type'      => empty( $pts ) ? $inst->post_types : $pts,
@@ -166,7 +182,7 @@ function _cb_pre_get_posts( \WP_Query $query ): void {
 
 	if ( ! empty( $ex_ps ) ) {
 		$query->set( 'post__not_in', $ex_ps );
-		$inst->is_restricted = true;
+		$inst->is_restricted = true;  // @phpstan-ignore-line
 
 		$p = $query->get( 'p' );
 		if ( in_array( $p, $ex_ps, true ) ) {
@@ -202,7 +218,13 @@ function _cb_body_class( array $classes ): array {
  *
  * @access private
  *
- * @return object Instance.
+ * @return object{
+ *     whites              : array{ cidr: string, cls: string }[],
+ *     post_types          : string[],
+ *     current_body_classes: string[],
+ *     is_allowed          : bool,
+ *     is_restricted       : bool,
+ * } Instance.
  */
 function _get_instance(): object {
 	static $values = null;
@@ -213,7 +235,7 @@ function _get_instance(): object {
 		/**
 		 * White list of allowed IPs.
 		 *
-		 * @var array<array{string, string}>
+		 * @var array{ cidr: string, cls: string }[]
 		 */
 		public $whites = array();
 
@@ -234,7 +256,7 @@ function _get_instance(): object {
 		/**
 		 * Whether the current post is allowed to be shown.
 		 *
-		 * @var bool|null
+		 * @var bool
 		 */
 		public $is_allowed = false;
 

@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-08-31
+ * @version 2023-11-04
  */
 
 /*  // phpcs:disable
@@ -29,6 +29,8 @@ TinyMCE Advanced Setting:
 }
 */  // phpcs:enable
 
+declare(strict_types=1);
+
 namespace wpinc\sys\classic_editor;
 
 require_once __DIR__ . '/assets/asset-url.php';
@@ -52,14 +54,14 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
 		function () use ( $url_to, $row_index ) {
 			add_filter(
 				'mce_external_plugins',
-				function ( $plugins ) use ( $url_to ) {
+				function ( array $plugins ) use ( $url_to ) {
 					$plugins['columns'] = \wpinc\abs_url( $url_to, './assets/js/classic-editor-command.min.js' );
 					return $plugins;
 				}
 			);
 			add_filter(
 				"mce_buttons_$row_index",
-				function ( $buttons ) {
+				function ( array $buttons ) {
 					array_push( $buttons, 'styleselect', 'column_2', 'column_3', 'column_4' );
 					return $buttons;
 				}
@@ -113,7 +115,7 @@ function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
 	);
 
 	$formats = array();
-	if ( isset( $mce_init['style_formats'] ) ) {
+	if ( isset( $mce_init['style_formats'] ) && is_string( $mce_init['style_formats'] ) ) {
 		$f = json_decode( $mce_init['style_formats'] );
 		if ( is_array( $f ) ) {
 			$formats = $f;
@@ -259,17 +261,17 @@ function _cb_admin_print_footer_scripts(): void {
  *
  * @access private
  *
- * @param callable $fn           A function to be called.
+ * @param callable $f            A function to be called.
  * @param bool     $only_classic Whether it is called only when the classic editor.
  */
-function _call_on_post_screen( callable $fn, bool $only_classic = false ): void {
+function _call_on_post_screen( callable $f, bool $only_classic = false ): void {
 	if ( did_action( 'current_screen' ) ) {
-		_cb_current_screen( $fn, $only_classic );
+		_cb_current_screen( $f, $only_classic );
 	} else {
 		add_action(
 			'current_screen',
-			function () use ( $fn, $only_classic ) {
-				_cb_current_screen( $fn, $only_classic );
+			function () use ( $f, $only_classic ) {
+				_cb_current_screen( $f, $only_classic );
 			}
 		);
 	}
@@ -280,19 +282,19 @@ function _call_on_post_screen( callable $fn, bool $only_classic = false ): void 
  *
  * @access private
  *
- * @param callable $fn           A function to be called.
+ * @param callable $f            A function to be called.
  * @param bool     $only_classic Whether it is called only when the classic editor.
  */
-function _cb_current_screen( callable $fn, bool $only_classic ): void {
+function _cb_current_screen( callable $f, bool $only_classic ): void {
 	global $pagenow;
 	if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
 		if ( $only_classic ) {
 			$cs = get_current_screen();
 			if ( $cs && ! $cs->is_block_editor() ) {
-				$fn();
+				$f();
 			}
 		} else {
-			$fn();
+			$f();
 		}
 	}
 }

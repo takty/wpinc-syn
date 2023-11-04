@@ -4,29 +4,36 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-08-31
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys\ajax;
 
-/**
+/** phpcs:ignore
  * Activate AJAX.
  *
- * @param array<string, mixed> $args {
+ * phpcs:ignore
+ * @param array{
+ *     action  : string,
+ *     response: callable,
+ *     public? : bool,
+ *     nonce?  : string,
+ * } $args Arguments.
+ * $args {
  *     Arguments.
  *
- *     @type string 'action'
- *     @type string 'response'
- *     @type bool   'public'   (Optional) Default false.
- *     @type string 'nonce'    (Optional)
+ *     @type string   'action'
+ *     @type callable 'response'
+ *     @type bool     'public'   (Optional) Default false.
+ *     @type string   'nonce'    (Optional)
  * }
  */
 function activate( array $args ): void {
 	$args += array(
-		'action'   => '',
-		'response' => '',
-		'public'   => false,
-		'nonce'    => '',
+		'public' => false,
+		'nonce'  => '',
 	);
 	if ( empty( $args['nonce'] ) ) {
 		$args['nonce'] = $args['action'];
@@ -55,8 +62,8 @@ function activate( array $args ): void {
 /**
  * Gets AJAX URL.
  *
- * @param array<string, mixed> $args  Arguments.
- * @param array<string, mixed> $query (Optional) Query arguments.
+ * @param array{ action: string, nonce: string } $args  Arguments.
+ * @param array<string, mixed>                   $query (Optional) Query arguments.
  * @return string AJAX URL.
  */
 function get_url( array $args, array $query = array() ): string {
@@ -73,7 +80,7 @@ function get_url( array $args, array $query = array() ): string {
 /**
  * Callback function for 'wp_ajax_{$action}' and 'wp_ajax_nopriv_{$action}' actions.
  *
- * @param array<string, mixed> $args Arguments.
+ * @param array{ nonce: string, response: callable } $args Arguments.
  */
 function _cb_wp_ajax__( array $args ): void {
 	check_ajax_referer( $args['nonce'], 'nonce' );
