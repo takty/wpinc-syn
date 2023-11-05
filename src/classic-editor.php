@@ -281,6 +281,7 @@ function _call_on_post_screen( callable $f, bool $only_classic = false ): void {
  * Callback function for 'current_screen' hook.
  *
  * @access private
+ * @global string $pagenow
  *
  * @param callable $f            A function to be called.
  * @param bool     $only_classic Whether it is called only when the classic editor.

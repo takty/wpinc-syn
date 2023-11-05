@@ -4,8 +4,10 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2022-02-21
+ * @version 2023-11-04
  */
+
+declare(strict_types=1);
 
 namespace wpinc\sys;
 
@@ -47,6 +49,8 @@ function the_admin_edit_menu( ?int $menu_id, string $cls = '' ): void {
 /**
  * Determines whether the current user can edit the post.
  *
+ * @global \WP_Post|null $post
+ *
  * @return bool True if user can edit post.
  */
 function can_edit_post(): bool {
@@ -69,6 +73,8 @@ function can_edit_theme_options(): bool {
 
 /**
  * Echos edit link for post.
+ *
+ * @global \WP_Post $post
  */
 function the_edit_link_post(): void {
 	global $post;

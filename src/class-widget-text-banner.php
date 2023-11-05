@@ -141,6 +141,8 @@ class Widget_Text_Banner extends \WP_Widget {
 	/**
 	 * Echoes the widget content.
 	 *
+	 * @global \WP_Post $post
+	 *
 	 * @param array<string, string> $args     Display arguments including 'before_title', 'after_title',
 	 *                                        'before_widget', and 'after_widget'.
 	 * @param array<string, mixed>  $instance The settings for the particular instance of the widget.

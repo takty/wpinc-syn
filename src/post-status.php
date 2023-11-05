@@ -132,6 +132,7 @@ function _register( string $post_type, string $meta_key ): void {
  * Initializes hooks.
  *
  * @access private
+ * @global string $pagenow
  */
 function _initialize_hooks(): void {
 	if ( is_admin() ) {
