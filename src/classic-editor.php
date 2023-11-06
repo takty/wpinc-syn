@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2023-11-06
  */
 
 /*  // phpcs:disable
@@ -228,7 +228,7 @@ function add_quick_tags(): void {
 	}
 	_call_on_post_screen(
 		function () {
-			add_action( 'admin_print_footer_scripts', '\wpinc\sys\classic_editor\_cb_admin_print_footer_scripts' );
+			add_action( 'admin_print_footer_scripts', '\wpinc\sys\classic_editor\_cb_admin_print_footer_scripts', 99 );
 		},
 		true
 	);
