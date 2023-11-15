@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2023-11-15
  */
 
 declare(strict_types=1);
@@ -13,6 +13,8 @@ namespace wpinc\sys;
 
 /**
  * Activates simple default slugs.
+ *
+ * @psalm-suppress RedundantCast
  *
  * @param string|string[] $post_type_s Post types. Default array() (all post types).
  */
@@ -29,9 +31,9 @@ function activate_simple_default_slug( $post_type_s = array() ): void {
 				$post instanceof \WP_Post &&
 				( '0000-00-00 00:00:00' === $post->post_date_gmt ) &&
 				( empty( $pts ) || in_array( $post_type, $pts, true ) ) &&
-				( preg_match( '/%/u', $slug ) )
+				( preg_match( '/%/u', (string) $slug ) )  // String cast is needed due to 'wp_insert_post'.
 			) {
-				$slug = (string) preg_replace( '/[^a-zA-Z0-9_-]/u', '_', urldecode( $slug ) );
+				$slug = (string) preg_replace( '/[^a-zA-Z0-9_-]/u', '_', urldecode( (string) $slug ) );
 				if ( 0 === strlen( $slug ) || ! preg_match( '/[^_]/u', $slug ) ) {
 					$slug = (string) $post_id;
 				}
@@ -108,7 +110,7 @@ function _cb_the_password_form( string $output ): string {
  * @param bool $protected Whether to remove 'Protected'.
  * @param bool $private   Whether to remove 'Private'.
  */
-function remove_post_title_indication( bool $protected, bool $private ): void {
+function remove_post_title_indication( bool $protected, bool $private ): void {  // phpcs:ignore
 	if ( ! is_admin() ) {
 		if ( $protected ) {
 			add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format', 10, 0 );
