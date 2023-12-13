@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2023-12-13
  */
 
 declare(strict_types=1);
@@ -225,10 +225,14 @@ function _cb_output_html_field( array $args ): void {
 	$name = "{$inst->option_key}[{$key}]";
 	$desc = $params['description'] ?? '';
 	$val  = $vals[ $key ] ?? null;
+	$chs  = $params['choices'] ?? array();
 
 	switch ( $params['type'] ) {
 		case 'checkbox':
 			_echo_checkbox( $val, $key, $name, $desc );
+			break;
+		case 'radio_buttons':
+			_echo_radio_buttons( $val, $key, $name, $chs );
 			break;
 		case 'textarea':
 			_echo_textarea( $val, $key, $name, $desc );
@@ -312,6 +316,28 @@ function _echo_checkbox( ?string $val, string $_key, string $name, string $desc 
 		'1' === ( $val ?? '' ) ? ' checked' : '',
 		esc_html( $desc )
 	);
+}
+
+/**
+ * Displays radio button fields.
+ *
+ * @access private
+ *
+ * @param string|null           $val  Current value.
+ * @param string                $_key Sub key of the option.
+ * @param string                $name Name attribute.
+ * @param array<string, string> $chs  Array of choices to labels.
+ */
+function _echo_radio_buttons( ?string $val, string $_key, string $name, array $chs ): void {
+	foreach ( $chs as $ch => $label ) {
+		printf(
+			'<p><label><input type="radio" name="%s" value="%s"%s> %s</label></p>',
+			esc_attr( $name ),
+			esc_attr( $ch ),
+			( $val ?? '' ) === $ch ? ' checked' : '',
+			esc_html( $label )
+		);
+	}
 }
 
 
