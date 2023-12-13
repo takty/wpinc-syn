@@ -24,12 +24,12 @@
 		"not dead"
 	],
 	"dependencies": {
-		"@babel/core": "^7.22.20",
-		"@babel/preset-env": "^7.22.20",
+		"@babel/core": "^7.23.6",
+		"@babel/preset-env": "^7.23.6",
 		"gettext-parser": "^7.0.1",
 		"gulp": "^4.0.2",
 		"gulp-babel": "^8.0.0",
-		"gulp-changed": "^4.0.3",
+		"gulp-changed": "^5.0.2",
 		"gulp-ignore": "^3.0.0",
 		"gulp-plumber": "^1.2.1",
 		"gulp-preprocess": "^4.0.2",
