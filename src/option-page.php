@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-12-13
+ * @version 2023-12-26
  */
 
 declare(strict_types=1);
@@ -207,7 +207,7 @@ function _cb_sanitize( array $input ): array {
  * phpcs:ignore
  * @param array{
  *     string,
- *     array{ type: string, label: string, description: string|null, filter: callable|null },
+ *     array{ type: string, label: string, description?: string, filter?: callable, choices?: array<string, string> },
  *     array<string, string|null>,
  * } $args Arguments.
  * $args {
