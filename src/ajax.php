@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2024-01-10
  */
 
 declare(strict_types=1);
@@ -62,11 +62,15 @@ function activate( array $args ): void {
 /**
  * Gets AJAX URL.
  *
- * @param array{ action: string, nonce: string } $args  Arguments.
- * @param array<string, mixed>                   $query (Optional) Query arguments.
+ * @param array{ action: string, nonce?: string } $args  Arguments.
+ * @param array<string, mixed>                    $query (Optional) Query arguments.
  * @return string AJAX URL.
  */
 function get_url( array $args, array $query = array() ): string {
+	$args += array( 'nonce' => '' );
+	if ( empty( $args['nonce'] ) ) {
+		$args['nonce'] = $args['action'];
+	}
 	$query['action'] = $args['action'];
 	$query['nonce']  = wp_create_nonce( $args['nonce'] );
 
