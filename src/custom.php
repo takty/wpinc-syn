@@ -4,12 +4,47 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-15
+ * @version 2024-02-24
  */
 
 declare(strict_types=1);
 
 namespace wpinc\sys;
+
+/**
+ * Activates document title with post type.
+ */
+function activate_document_title_with_post_type(): void {
+	if ( ! is_admin() ) {
+		return;
+	}
+	add_filter(
+		'document_title_parts',
+		function ( $tps ) {
+			$sep = apply_filters( 'document_title_separator', '-' );
+
+			if ( is_year() ) {
+				$tps['title'] = (string) get_the_date( _x( 'Y', 'yearly archives date format' ) );
+			} elseif ( is_month() ) {
+				$tps['title'] = (string) get_the_date( _x( 'F Y', 'monthly archives date format' ) );
+			} elseif ( is_day() ) {
+				$tps['title'] = (string) get_the_date();
+			} elseif ( is_tax() ) {
+				$tps['title'] = (string) single_term_title( '', false );
+			}
+			if ( is_date() || is_tax() ) {
+				$pt = get_post_type();
+				if ( $pt ) {
+					$pto = get_post_type_object( $pt );
+					if ( $pto && $pto->label ) {
+						$tps['title'] .= " $sep " . $pto->label;
+					}
+				}
+			}
+			return $tps;
+		}
+	);
+}
 
 /**
  * Activates simple default slugs.
