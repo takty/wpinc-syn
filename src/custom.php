@@ -15,14 +15,12 @@ namespace wpinc\sys;
  * Activates document title with post type.
  */
 function activate_document_title_with_post_type(): void {
-	if ( ! is_admin() ) {
+	if ( is_admin() ) {
 		return;
 	}
 	add_filter(
 		'document_title_parts',
 		function ( $tps ) {
-			$sep = apply_filters( 'document_title_separator', '-' );
-
 			if ( is_year() ) {
 				$tps['title'] = (string) get_the_date( _x( 'Y', 'yearly archives date format' ) );
 			} elseif ( is_month() ) {
@@ -37,6 +35,8 @@ function activate_document_title_with_post_type(): void {
 				if ( $pt ) {
 					$pto = get_post_type_object( $pt );
 					if ( $pto && $pto->label ) {
+						$sep = apply_filters( 'document_title_separator', '-' );
+
 						$tps['title'] .= " $sep " . $pto->label;
 					}
 				}
