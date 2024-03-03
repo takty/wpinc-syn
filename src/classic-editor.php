@@ -4,27 +4,24 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-06
+ * @version 2024-03-03
  */
 
 /*  // phpcs:disable
-TinyMCE Advanced Setting:
+Advanced Editor Tools Setting:
 {
-	"settings":{
-		"toolbar_1":"formatselect,bold,italic,underline,strikethrough,superscript,subscript,bullist,numlist,alignleft,aligncenter,alignright,link,unlink",
-		"toolbar_2":"undo,redo,styleselect,removeformat,forecolor,backcolor,blockquote",
-		"toolbar_3":"",
-		"toolbar_4":"",
-		"toolbar_classic_block":"formatselect,bold,italic,underline,strikethrough,superscript,subscript,bullist,numlist,alignleft,aligncenter,alignright,link,unlink,styleselect,removeformat,forecolor,backcolor,blockquote",
-		"toolbar_block":"core\/bold,core\/italic,core\/link,tadv\/removeformat",
-		"toolbar_block_side":[],
-		"panels_block":"",
-		"options":"menubar_block,menubar,merge_toolbars,advlist",
-		"plugins":"table,advlist"
+	"settings": {
+		"toolbar_1": "formatselect,bold,italic,underline,strikethrough,superscript,subscript,bullist,numlist,alignleft,aligncenter,alignright,link,unlink",
+		"toolbar_2": "undo,redo,styleselect,removeformat,forecolor,backcolor,blockquote",
+		"toolbar_3": "",
+		"toolbar_4": "",
+		"toolbar_classic_block": "formatselect,bold,italic,underline,strikethrough,superscript,subscript,bullist,numlist,alignleft,aligncenter,alignright,link,unlink,styleselect,removeformat,forecolor,backcolor,blockquote",
+		"options": "menubar_block,menubar,merge_toolbars,advlist",
+		"plugins": "advlist"
 	},
-	"admin_settings":{
-		"options":"hybrid_mode,classic_paragraph_block,no_autop",
-		"disabled_editors":""
+	"admin_settings": {
+		"options": "classic_paragraph_block",
+		"disabled_editors": ""
 	}
 }
 */  // phpcs:enable
