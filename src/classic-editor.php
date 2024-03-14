@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2024-03-03
+ * @version 2024-03-14
  */
 
 /*  // phpcs:disable
@@ -56,6 +56,7 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
 					return $plugins;
 				}
 			);
+			/** @psalm-suppress HookNotFound */  // phpcs:ignore
 			add_filter(
 				"mce_buttons_$row_index",
 				function ( array $buttons ) {
@@ -225,7 +226,7 @@ function add_quick_tags(): void {
 	}
 	_call_on_post_screen(
 		function () {
-			add_action( 'admin_print_footer_scripts', '\wpinc\sys\classic_editor\_cb_admin_print_footer_scripts', 99 );
+			add_action( 'admin_print_footer_scripts', '\wpinc\sys\classic_editor\_cb_admin_print_footer_scripts', 99, 0 );
 		},
 		true
 	);

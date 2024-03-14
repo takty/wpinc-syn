@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2024-01-10
+ * @version 2024-03-13
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ function activate( array $args ): void {
 		'public' => false,
 		'nonce'  => '',
 	);
-	if ( empty( $args['nonce'] ) ) {
+	if ( '' === $args['nonce'] ) {
 		$args['nonce'] = $args['action'];
 	}
 
@@ -46,15 +46,21 @@ function activate( array $args ): void {
 	add_action(
 		"wp_ajax_{$args['action']}",
 		function () use ( $args ) {
+			/** @psalm-suppress InvalidArgument */  // phpcs:ignore
 			_cb_wp_ajax__( $args );
-		}
+		},
+		10,
+		0
 	);
 	if ( $args['public'] ) {
 		add_action(
 			"wp_ajax_nopriv_{$args['action']}",
 			function () use ( $args ) {
+				/** @psalm-suppress InvalidArgument */  // phpcs:ignore
 				_cb_wp_ajax__( $args );
-			}
+			},
+			10,
+			0
 		);
 	}
 }
@@ -68,7 +74,7 @@ function activate( array $args ): void {
  */
 function get_url( array $args, array $query = array() ): string {
 	$args += array( 'nonce' => '' );
-	if ( empty( $args['nonce'] ) ) {
+	if ( '' === $args['nonce'] ) {
 		$args['nonce'] = $args['action'];
 	}
 	$query['action'] = $args['action'];

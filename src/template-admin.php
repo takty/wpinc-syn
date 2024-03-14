@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2024-03-14
  */
 
 declare(strict_types=1);
@@ -41,10 +41,13 @@ function activate( string $function_name = 'setup_template_admin' ): void {
 function _cb_admin_menu__template_admin( array $suffixes, string $function_name ): void {
 	$post_id = \wpinc\get_admin_post_id();
 
-	$pt = get_post_meta( $post_id, '_wp_page_template', true );
-	if ( is_string( $pt ) && ! empty( $pt ) && 'default' !== $pt ) {
+	$tmp = get_post_meta( $post_id, '_wp_page_template', true );
+	if (
+		is_string( $tmp ) && '' !== $tmp  // Check for non-empty-string.
+		&& 'default' !== $tmp
+	) {
 		foreach ( $suffixes as $sf ) {
-			if ( _load_page_template_admin( $post_id, $pt, $sf, $function_name ) ) {
+			if ( _load_page_template_admin( $post_id, $tmp, $sf, $function_name ) ) {
 				return;
 			}
 		}
@@ -56,10 +59,10 @@ function _cb_admin_menu__template_admin( array $suffixes, string $function_name 
 			}
 		}
 	}
-	$post_type = \wpinc\get_admin_post_type();
-	if ( ! empty( $post_type ) ) {
+	$pt = \wpinc\get_admin_post_type();
+	if ( is_string( $pt ) ) {
 		foreach ( $suffixes as $sf ) {
-			if ( _load_page_template_admin( $post_id, $post_type . '.php', $sf, $function_name ) ) {
+			if ( _load_page_template_admin( $post_id, $pt . '.php', $sf, $function_name ) ) {
 				return;
 			}
 		}

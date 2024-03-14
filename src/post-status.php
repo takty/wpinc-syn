@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2024-03-13
  */
 
 declare(strict_types=1);
@@ -34,10 +34,10 @@ function initialize( array $args ) {
 		'post_state' => null,
 		'post_type'  => array(),
 	);
-	if ( empty( $args['meta_key'] ) ) {
+	if ( '' === $args['meta_key'] ) {
 		return new \WP_Error( 'empty_meta_key', __( 'The meta key is empty.' ) );
 	}
-	if ( empty( $args['label'] ) ) {
+	if ( '' === $args['label'] ) {
 		return new \WP_Error( 'empty_label', __( 'The label is empty.' ) );
 	}
 
@@ -151,7 +151,7 @@ function _initialize_hooks(): void {
 				if ( 'post-new.php' === $pagenow || 'post.php' === $pagenow ) {
 					$cs = get_current_screen();
 					if ( $cs && $cs->is_block_editor() ) {
-						add_action( 'enqueue_block_editor_assets', '\wpinc\sys\post_status\_cb_enqueue_block_editor_assets' );
+						add_action( 'enqueue_block_editor_assets', '\wpinc\sys\post_status\_cb_enqueue_block_editor_assets', 10, 0 );
 					} else {
 						add_action( 'post_submitbox_misc_actions', '\wpinc\sys\post_status\_cb_post_submitbox_misc_actions' );
 						add_action( 'save_post', '\wpinc\sys\post_status\_cb_save_post', 10, 2 );
@@ -197,7 +197,7 @@ function _extract_post_type_specific_setting( string $post_type ): array {
 function _cb_post_class( array $classes, array $_cls, int $post_id ): array {
 	$inst = _get_instance();
 	foreach ( $inst->settings as $meta_key => $s ) {
-		if ( empty( $s['post_class'] ) ) {
+		if ( ! is_string( $s['post_class'] ) || '' === $s['post_class'] ) {  // Check for non-empty-string.
 			continue;
 		}
 		if ( in_array( get_post_type( $post_id ), $s['post_type'], true ) ) {
@@ -222,7 +222,7 @@ function _cb_post_class( array $classes, array $_cls, int $post_id ): array {
 function _cb_display_post_states( array $post_states, \WP_Post $post ): array {
 	$inst = _get_instance();
 	foreach ( $inst->settings as $meta_key => $s ) {
-		if ( empty( $s['post_state'] ) ) {
+		if ( ! is_string( $s['post_state'] ) || '' === $s['post_state'] ) {  // Check for non-empty-string.
 			continue;
 		}
 		if ( in_array( get_post_type( $post->ID ), $s['post_type'], true ) ) {
@@ -315,7 +315,7 @@ function _cb_save_post( int $post_id, \WP_Post $post ): void {
 	$nonce = $_POST['_wpinc_post_status_nonce'] ?? null;  // phpcs:ignore
 	if (
 		! is_string( $nonce ) ||
-		! wp_verify_nonce( sanitize_key( $nonce ), '_wpinc_post_status' ) ||
+		false === wp_verify_nonce( sanitize_key( $nonce ), '_wpinc_post_status' ) ||
 		defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE
 	) {
 		return;

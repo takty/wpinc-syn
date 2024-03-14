@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-12-26
+ * @version 2024-03-13
  */
 
 declare(strict_types=1);
@@ -43,10 +43,10 @@ function activate( array $args ): void {
 		'as_menu_page' => false,
 		'sections'     => array(),
 	);
-	if ( empty( $args['page_title'] ) && ! empty( $args['menu_title'] ) ) {
+	if ( '' === $args['page_title'] && '' !== $args['menu_title'] ) {
 		$args['page_title'] = $args['menu_title'];
 	}
-	if ( ! empty( $args['page_title'] ) && empty( $args['menu_title'] ) ) {
+	if ( '' !== $args['page_title'] && '' === $args['menu_title'] ) {
 		$args['menu_title'] = $args['page_title'];
 	}
 	foreach ( $args['sections'] as $_sid => &$cont ) {
@@ -149,6 +149,7 @@ function _cb_admin_init(): void {
 		add_settings_section( $sid, $cont['label'], '__return_false', $inst->slug );
 
 		foreach ( $cont['fields'] as $key => $params ) {
+			/** @psalm-suppress InvalidArgument */  // phpcs:ignore
 			add_settings_field(
 				$key,
 				$params['label'],
@@ -190,7 +191,7 @@ function _cb_sanitize( array $input ): array {
 				continue;
 			}
 			$filter = $params['filter'];
-			if ( $filter ) {
+			if ( is_callable( $filter ) ) {
 				$new[ $key ] = call_user_func( $filter, $input[ $key ] );
 			} else {
 				$new[ $key ] = $input[ $key ];
@@ -263,7 +264,7 @@ function _echo_input( ?string $val, string $key, string $name, string $type, str
 		esc_attr( $val ?? '' ),
 		esc_attr( $key )
 	);
-	if ( ! empty( $desc ) ) {
+	if ( '' !== $desc ) {
 		printf(
 			'<p class="description" id="%s-description">%s</p>',
 			esc_attr( $key ),
@@ -283,7 +284,7 @@ function _echo_input( ?string $val, string $key, string $name, string $type, str
  * @param string      $desc (Optional) Description. Default ''.
  */
 function _echo_textarea( ?string $val, string $key, string $name, string $desc = '' ): void {
-	if ( ! empty( $desc ) ) {
+	if ( '' !== $desc ) {
 		printf(
 			'<label for="%s">%s</label>',
 			esc_attr( $key ),

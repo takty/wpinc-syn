@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2024-02-24
+ * @version 2024-03-14
  */
 
 declare(strict_types=1);
@@ -32,7 +32,7 @@ function activate_document_title_with_post_type(): void {
 			}
 			if ( is_date() || is_tax() ) {
 				$pt = get_post_type();
-				if ( $pt ) {
+				if ( is_string( $pt ) ) {
 					$pto = get_post_type_object( $pt );
 					if ( $pto && $pto->label ) {
 						$sep = apply_filters( 'document_title_separator', '-' );
@@ -92,7 +92,7 @@ function activate_enter_title_here_label(): void {
 		function ( $enter_title_here, $post ) {
 			$pto = get_post_type_object( $post->post_type );
 			$lab = $pto->labels->enter_title_here ?? '';
-			if ( ! empty( $lab ) && is_string( $lab ) ) {
+			if ( is_string( $lab ) && '' !== $lab ) {  // Check for non-empty-string.
 				$enter_title_here = esc_html( $lab );
 			}
 			return $enter_title_here;
@@ -148,10 +148,10 @@ function _cb_the_password_form( string $output ): string {
 function remove_post_title_indication( bool $protected, bool $private ): void {  // phpcs:ignore
 	if ( ! is_admin() ) {
 		if ( $protected ) {
-			add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format', 10, 0 );
+			add_filter( 'protected_title_format', '\wpinc\sys\_cb_title_format', 10 );
 		}
 		if ( $private ) {
-			add_filter( 'private_title_format', '\wpinc\sys\_cb_title_format', 10, 0 );
+			add_filter( 'private_title_format', '\wpinc\sys\_cb_title_format', 10 );
 		}
 	}
 }
@@ -159,19 +159,19 @@ function remove_post_title_indication( bool $protected, bool $private ): void { 
 /**
  * Callback function for 'protected_title_format' and 'private_title_format' filter.
  *
+ * @param string $_prepend Dummy.
  * @return string Format.
  */
-function _cb_title_format(): string {
+function _cb_title_format( string $_prepend ): string {  // phpcs:ignore
 	return '%s';
 }
 
 /**
  * Removes prefixes from archive titles.
- *
- * @psalm-suppress InvalidScalarArgument
  */
 function remove_archive_title_prefix(): void {
 	if ( ! is_admin() ) {
+		/** @psalm-suppress PossiblyInvalidArgument */  // phpcs:ignore
 		add_filter( 'get_the_archive_title_prefix', '__return_empty_string' );
 	}
 }

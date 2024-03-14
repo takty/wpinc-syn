@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2024-03-13
  */
 
 declare(strict_types=1);
@@ -14,7 +14,7 @@ namespace wpinc\sys;
 /**
  * Text banner widget.
  *
- * @psalm-suppress UnusedClass
+ * @psalm-suppress UnusedClass, PropertyNotSetInConstructor
  */
 class Widget_Text_Banner extends \WP_Widget {
 
@@ -115,7 +115,9 @@ class Widget_Text_Banner extends \WP_Widget {
 			function () {
 				wp_enqueue_style( 'wp-color-picker' );
 				wp_enqueue_script( 'wp-color-picker' );
-			}
+			},
+			10,
+			0
 		);
 		register_widget( '\wpinc\sys\Widget_Text_Banner' );
 	}
@@ -141,14 +143,11 @@ class Widget_Text_Banner extends \WP_Widget {
 	/**
 	 * Echoes the widget content.
 	 *
-	 * @global \WP_Post $post
-	 *
 	 * @param array<string, string> $args     Display arguments including 'before_title', 'after_title',
 	 *                                        'before_widget', and 'after_widget'.
 	 * @param array<string, mixed>  $instance The settings for the particular instance of the widget.
 	 */
 	public function widget( $args, $instance ): void {
-		global $post;
 		$instance += array(
 			'title'     => '',
 			'link_url'  => '',
@@ -236,6 +235,7 @@ class Widget_Text_Banner extends \WP_Widget {
 	 * @return string Default return is 'noform'.
 	 */
 	public function form( $instance ): string {
+		/** @psalm-suppress RedundantCastGivenDocblockType */  // phpcs:ignore
 		$instance = wp_parse_args(
 			(array) $instance,
 			array(
@@ -258,10 +258,13 @@ class Widget_Text_Banner extends \WP_Widget {
 		$name_color_bg  = $this->get_field_name( 'color_bg' );
 		$name_color_opt = $this->get_field_name( 'color_opt' );
 
-		$title     = $instance['title'];
-		$link_url  = $instance['link_url'];
-		$color     = empty( $instance['color'] ) ? '#ffffff' : $instance['color'];
-		$color_bg  = empty( $instance['color_bg'] ) ? '#ffffff' : $instance['color_bg'];
+		$title    = $instance['title'];
+		$link_url = $instance['link_url'];
+		/** @psalm-suppress RedundantConditionGivenDocblockType */  // phpcs:ignore
+		$color = empty( $instance['color'] ) ? '#ffffff' : $instance['color'];
+		/** @psalm-suppress RedundantConditionGivenDocblockType */  // phpcs:ignore
+		$color_bg = empty( $instance['color_bg'] ) ? '#ffffff' : $instance['color_bg'];
+		/** @psalm-suppress RedundantConditionGivenDocblockType */  // phpcs:ignore
 		$color_opt = empty( $instance['color_opt'] ) ? '#ffffff' : $instance['color_opt'];
 
 		echo '<table>';

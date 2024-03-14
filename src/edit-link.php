@@ -4,7 +4,7 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2023-11-04
+ * @version 2024-03-14
  */
 
 declare(strict_types=1);
@@ -33,7 +33,7 @@ function the_admin_edit_post( string $cls = '' ): void {
  * @param string   $cls     CSS Class.
  */
 function the_admin_edit_menu( ?int $menu_id, string $cls = '' ): void {
-	if ( null !== $menu_id && can_edit_theme_options() ) {
+	if ( is_int( $menu_id ) && can_edit_theme_options() ) {
 		?>
 		<div class="admin-edit<?php echo esc_attr( ' ' . $cls ); ?>">
 			<a href="<?php the_edit_link_menu( $menu_id ); ?>">EDIT</a>
