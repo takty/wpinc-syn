@@ -4,10 +4,11 @@
  *
  * @package Wpinc Sys
  * @author Takuto Yanagida
- * @version 2024-03-14
+ * @version 2024-04-18
  */
 
 /*  // phpcs:disable
+cspell:disable
 Advanced Editor Tools Setting:
 {
 	"settings": {
@@ -24,6 +25,7 @@ Advanced Editor Tools Setting:
 		"disabled_editors": ""
 	}
 }
+cspell:enable
 */  // phpcs:enable
 
 declare(strict_types=1);
@@ -60,7 +62,7 @@ function add_buttons( ?string $url_to = null, int $row_index = 2 ): void {
 			add_filter(
 				"mce_buttons_$row_index",
 				function ( array $buttons ) {
-					array_push( $buttons, 'styleselect', 'column_2', 'column_3', 'column_4' );
+					array_push( $buttons, 'styleselect', 'column_2', 'column_3', 'column_4' );  // cspell:disable-line.
 					return $buttons;
 				}
 			);
@@ -107,9 +109,11 @@ function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
 		'button'          => _x( 'Link Button', 'classic editor', 'wpinc_sys' ),
 		'frame'           => _x( 'Frame', 'classic editor', 'wpinc_sys' ),
 		'frame-alt'       => _x( 'Frame Alt', 'classic editor', 'wpinc_sys' ),
-		'tab-page'        => _x( 'Tab Pages', 'classic editor', 'wpinc_sys' ),
-		'pseudo-tab-page' => _x( 'Pseudo Tab Pages', 'classic editor', 'wpinc_sys' ),
+		'tab-scroll'      => _x( 'Tab Scroll', 'classic editor', 'wpinc_sys' ),
+		'tab-stack'       => _x( 'Tab Stack', 'classic editor', 'wpinc_sys' ),
 		'clear'           => _x( 'Clear Float', 'classic editor', 'wpinc_sys' ),
+		'tab-page'        => _x( 'Tab Pages (Old)', 'classic editor', 'wpinc_sys' ),
+		'pseudo-tab-page' => _x( 'Pseudo Tab Pages (Old)', 'classic editor', 'wpinc_sys' ),
 	);
 
 	$formats = array();
@@ -138,6 +142,23 @@ function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
 			'wrapper' => true,
 		),
 		array(
+			'title'   => $ls['tab-scroll'],
+			'block'   => 'div',
+			'classes' => 'tab-scroll',
+			'wrapper' => true,
+		),
+		array(
+			'title'   => $ls['tab-stack'],
+			'block'   => 'div',
+			'classes' => 'tab-stack',
+			'wrapper' => true,
+		),
+		array(
+			'title'   => $ls['clear'],
+			'block'   => 'div',
+			'classes' => 'clear',
+		),
+		array(
 			'title'   => $ls['tab-page'],
 			'block'   => 'div',
 			'classes' => 'tab-page',
@@ -148,11 +169,6 @@ function _cb_tiny_mce_before_init( array $mce_init, array $args ): array {
 			'block'   => 'div',
 			'classes' => 'pseudo-tab-page',
 			'wrapper' => true,
-		),
-		array(
-			'title'   => $ls['clear'],
-			'block'   => 'div',
-			'classes' => 'clear',
 		),
 	);
 	if ( isset( $args['formats'] ) ) {
@@ -238,7 +254,7 @@ function add_quick_tags(): void {
  * @access private
  */
 function _cb_admin_print_footer_scripts(): void {
-	if ( wp_script_is( 'quicktags' ) ) {
+	if ( wp_script_is( 'quicktags' ) ) {  // cspell:disable-line.
 		?>
 		<script>
 		QTags.addButton('qt-small', 'small', '<small>', '</small>');

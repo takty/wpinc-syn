@@ -1,7 +1,7 @@
 # Translation of Sys - Development in Japanese
 # @package Wpinc Sys
 # @author Takuto Yanagida
-# @version 2023-06-28
+# @version 2024-04-18
 
 # IP Restriction ---------------------------------------------------------------
 
@@ -33,16 +33,24 @@ msgid "Frame Alt"
 msgstr "囲み・他"
 
 msgctxt "classic editor"
-msgid "Tab Pages"
-msgstr "タブ・ページ"
+msgid "Tab Scroll"
+msgstr "タブ [スクロール]"
 
 msgctxt "classic editor"
-msgid "Pseudo Tab Pages"
-msgstr "擬似タブ・ページ"
+msgid "Tab Stack"
+msgstr "タブ [スタック]"
 
 msgctxt "classic editor"
 msgid "Clear Float"
 msgstr "フロート解除"
+
+msgctxt "classic editor"
+msgid "Tab Pages (Old)"
+msgstr "タブ・ページ（旧）"
+
+msgctxt "classic editor"
+msgid "Pseudo Tab Pages (Old)"
+msgstr "擬似タブ・ページ（旧）"
 
 # Text Banner Widget -----------------------------------------------------------
 
